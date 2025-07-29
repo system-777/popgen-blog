@@ -1,4 +1,3 @@
-{/* Reversed navigation: newer post on left, older post on right */}}
 {{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
 {{- if and (gt (len $pages) 1) (in $pages . ) }}
 <nav class="paginav">
