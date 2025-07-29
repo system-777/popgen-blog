@@ -1,0 +1,132 @@
+/* Enhanced post cards */
+.post-entry {
+    background: var(--entry);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.post-entry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Post title styling */
+.entry-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.entry-header h2 a {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+}
+
+/* Add category/tag styling */
+.entry-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.entry-footer .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.entry-footer .tags a {
+    background: var(--theme);
+    color: var(--primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.entry-footer .tags a:hover {
+    background: var(--primary);
+    color: var(--theme);
+}
+
+/* Reading time and date styling */
+.entry-meta {
+    color: var(--secondary);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.entry-meta::before {
+    content: "📅";
+    margin-right: 0.25rem;
+}
+
+/* Add subtle animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-entry {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.post-entry:nth-child(2) { animation-delay: 0.1s; }
+.post-entry:nth-child(3) { animation-delay: 0.2s; }
+.post-entry:nth-child(4) { animation-delay: 0.3s; }
+
+/* Hero section for main page */
+.profile {
+    text-align: center;
+    padding: 3rem 0;
+    background: linear-gradient(135deg, var(--theme) 0%, var(--entry) 100%);
+    border-radius: 12px;
+    margin-bottom: 3rem;
+}
+
+.profile .profile_inner h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--theme);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
+}

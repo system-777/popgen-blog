@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on system.popgen</title>
+    <link>https://system-777.github.io/popgen-blog/posts/</link>
+    <description>Recent content in Posts on system.popgen</description>
+    <generator>Hugo -- 0.148.2</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 29 Jul 2025 16:00:00 +0000</lastBuildDate>
+    <atom:link href="https://system-777.github.io/popgen-blog/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Performing PCA on Genetic Data Using PLINK</title>
+      <link>https://system-777.github.io/popgen-blog/posts/3-pca-analysis/</link>
+      <pubDate>Tue, 29 Jul 2025 16:00:00 +0000</pubDate>
+      <guid>https://system-777.github.io/popgen-blog/posts/3-pca-analysis/</guid>
+      <description>&lt;p&gt;In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset.
+Before we begin, we need to prepare a subset of samples we&amp;rsquo;re interested in analyzing.&lt;/p&gt;
+&lt;p&gt;To do this, we’ll extract sample information from the &lt;code&gt;.fam&lt;/code&gt; file.
+But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.&lt;/p&gt;
+&lt;p&gt;The easiest way is to open the corresponding &lt;code&gt;.ind&lt;/code&gt; file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad++, and search for the population name, in this case, Sardinian.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>From EIGENSTRAT to PACKEDPED</title>
+      <link>https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/</link>
+      <pubDate>Tue, 29 Jul 2025 15:30:00 +0000</pubDate>
+      <guid>https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/</guid>
+      <description>&lt;p&gt;The files downloaded in the previous blog post are in &lt;strong&gt;EIGENSTRAT&lt;/strong&gt; format. In this post, we’ll look at how to convert them to &lt;strong&gt;PACKEDPED&lt;/strong&gt; format.&lt;/p&gt;
+&lt;p&gt;PACKEDPED format allows for easier downstream processing using the &lt;strong&gt;PLINK&lt;/strong&gt; toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.&lt;/p&gt;
+&lt;h3 id=&#34;downloading-plink&#34;&gt;Downloading PLINK&lt;/h3&gt;
+&lt;p&gt;I use &lt;a href=&#34;https://www.cog-genomics.org/plink/&#34;&gt;PLINK 1.9&lt;/a&gt;. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Getting Started with Population Genetic Analysis</title>
+      <link>https://system-777.github.io/popgen-blog/posts/1-getting-started/</link>
+      <pubDate>Tue, 29 Jul 2025 15:00:00 +0000</pubDate>
+      <guid>https://system-777.github.io/popgen-blog/posts/1-getting-started/</guid>
+      <description>&lt;p&gt;A Linux environment is unavoidable when it comes to bioinformatical data processing and preparation. You can use your favorite distribution.&lt;/p&gt;
+&lt;p&gt;For Windows users, the &lt;strong&gt;Windows Subsystem for Linux (WSL)&lt;/strong&gt; provides a good alternative to dual booting or setting up a full virtual machine.&lt;/p&gt;
+&lt;h3 id=&#34;installing-wsl-with-debian&#34;&gt;Installing WSL with Debian&lt;/h3&gt;
+&lt;p&gt;Open &lt;strong&gt;PowerShell as Administrator&lt;/strong&gt; and run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;wsl --install -d Debian
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Once installed, update the system:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt update &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo apt upgrade -y
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;downloading-a-genetic-dataset&#34;&gt;Downloading A Genetic Dataset&lt;/h3&gt;
+&lt;p&gt;Next, you need to obtain a genetic dataset. A good and comprehensive resource is the &lt;a href=&#34;https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/FFIDCW&#34;&gt;Allen Ancient DNA Resource (AADR)&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

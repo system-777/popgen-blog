@@ -1,0 +1,24 @@
+baseURL = "https://system-777.github.io/popgen-blog/"
+languageCode = "en-us"
+title = "system.popgen"
+theme = "PaperMod"
+
+[params]
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowCodeCopyButtons = true
+  ShowPostNavLinks = true
+  
+  # Enable custom CSS
+  [params.assets]
+    disableHLJS = false
+  
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Contact"
+    url = "/contact/"
+    weight = 2

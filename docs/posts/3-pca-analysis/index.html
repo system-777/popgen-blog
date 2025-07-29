@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Performing PCA on Genetic Data Using PLINK | system.popgen</title>
+<meta name="keywords" content="">
+<meta name="description" content="In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset.
+Before we begin, we need to prepare a subset of samples we&rsquo;re interested in analyzing.
+To do this, we’ll extract sample information from the .fam file.
+But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.
+The easiest way is to open the corresponding .ind file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad&#43;&#43;, and search for the population name, in this case, Sardinian.">
+<meta name="author" content="">
+<link rel="canonical" href="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/">
+<link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://system-777.github.io/popgen-blog/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://system-777.github.io/popgen-blog/apple-touch-icon.png">
+<link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+ 
+.post-entry, .first-entry {
+    background: var(--entry);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+.post-entry:hover, .first-entry:hover {
+     
+}
+
+ 
+.entry-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.entry-header h2 a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.entry-header h2 a:hover {
+    color: #1e3a8a;  
+}
+
+ 
+.entry-content {
+    color: var(--content);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+ 
+.entry-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+ 
+.main {
+    padding-top: 2rem;
+}
+
+ 
+.post-entry, .first-entry {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-entry:nth-child(1) { animation-delay: 0.1s; }
+.post-entry:nth-child(2) { animation-delay: 0.2s; }
+.post-entry:nth-child(3) { animation-delay: 0.3s; }
+.post-entry:nth-child(4) { animation-delay: 0.4s; }
+
+.dark .post-entry, .dark .first-entry {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .post-entry:hover, .dark .first-entry:hover {
+     
+}
+
+ 
+@media (max-width: 768px) {
+    .post-entry, .first-entry {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .entry-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/">
+  <meta property="og:site_name" content="system.popgen">
+  <meta property="og:title" content="Performing PCA on Genetic Data Using PLINK">
+  <meta property="og:description" content="In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset. Before we begin, we need to prepare a subset of samples we’re interested in analyzing.
+To do this, we’ll extract sample information from the .fam file. But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.
+The easiest way is to open the corresponding .ind file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad&#43;&#43;, and search for the population name, in this case, Sardinian.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-29T16:00:00+00:00">
+    <meta property="article:modified_time" content="2025-07-29T16:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Performing PCA on Genetic Data Using PLINK">
+<meta name="twitter:description" content="In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset.
+Before we begin, we need to prepare a subset of samples we&rsquo;re interested in analyzing.
+To do this, we’ll extract sample information from the .fam file.
+But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.
+The easiest way is to open the corresponding .ind file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad&#43;&#43;, and search for the population name, in this case, Sardinian.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://system-777.github.io/popgen-blog/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Performing PCA on Genetic Data Using PLINK",
+      "item": "https://system-777.github.io/popgen-blog/posts/3-pca-analysis/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Performing PCA on Genetic Data Using PLINK",
+  "name": "Performing PCA on Genetic Data Using PLINK",
+  "description": "In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset. Before we begin, we need to prepare a subset of samples we\u0026rsquo;re interested in analyzing.\nTo do this, we’ll extract sample information from the .fam file. But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.\nThe easiest way is to open the corresponding .ind file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad++, and search for the population name, in this case, Sardinian.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset. Before we begin, we need to prepare a subset of samples we’re interested in analyzing.\nTo do this, we’ll extract sample information from the .fam file. But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.\nThe easiest way is to open the corresponding .ind file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad++, and search for the population name, in this case, Sardinian.\nYou should find entries like this:\n... HGDP01075.HO M Sardinian.HO HGDP01076.HO M Sardinian.HO HGDP01077.HO M Sardinian.HO ... These entries tell us which IIDs (individual IDs) belong to Sardinian samples. Now take note of these IIDs, for example: HGDP01075.HO.\nNext, open your .fam file (from the previously created PACKEDPED dataset). You’ll see something like:\n... 1664 HGDP01075.HO 0 0 1 2 1665 HGDP01076.HO 0 0 1 2 1666 HGDP01077.HO 0 0 1 2 ... Now match the IIDs from the .ind file to those in the .fam file. For each matching line in the .fam, copy the entire line into a new file. This new file will be used with PLINK’s --keep flag to retain only the samples of interest.\nNote: Since the .ind and .fam files are row-aligned, if you identify a block of consecutive samples in the .ind file belonging to the same population (e.g., 10 Sardinians in a row), you can safely copy the corresponding 10 lines from the .fam file without having to check each ID manually.\nAfter selecting a subset of samples of interest — for example, several European populations — and saving them to a file (in this case named samples, without a file extension), we can use PLINK to generate a new dataset:\nplink --bfile data --keep samples --make-bed --out subset This will create a new binary PLINK dataset (subset.bed, .bim, .fam) containing only the selected individuals.\nRunning PCA Now we can run the PCA on the subset:\n# --out specifies the output file prefix # The default number of principal components is 10, # so \"10\" could be omitted unless you want to change the number plink --bfile subset --pca 10 --out pca This will output two files: pca.eigenval and pca.eigenvec. The pca.eigenvec is what you’ll use for plotting or downstream analysis.\nTo keep only the IIDs and the principal components (and discard FIDs), you can use the following awk one-liner on Linux:\nawk '{$1=\"\"; sub(/^ /, \"\"); gsub(/ /, \",\"); print}' pca.eigenvec \u003e output.csv This will generate a CSV-output file where each line contains a sample ID followed by its principal component values.\nThe resulting file can be loaded into Python or R for downstream analysis. It’s also compatible with hobbyist tools like Vahaduo — though I personally don’t endorse such platforms, nor do I consider their models accurate or reliable.\nIn fact, you may observe with your own dataset that distances can vary significantly depending on how many and which samples are included. For example, if your PCA is based only on a regional subset, much more variance will remain within that region. As a result, samples may appear more distant from each other compared to what you’d see in global reference PCA datasets like G25.\nPlotting the PCA The previously created CSV-file can be used to make a PCA-plot. However, since the file contains only sample IDs and principal component values — without population labels — we’ll first generate a separate label file to make the plot easier to interpret. To do this, we’ll match each sample in the .fam file to its corresponding population label from the original .ind file. The .ind file contains the population in the third column. We’ll extract that and output it in the same order as the .fam file, so the labels line up with the PCA values.\nHere’s a one-liner using awk:\nawk 'NR==FNR {map[$1]=$3; next} {print map[$2]}' v62.0_HO_public.ind data.fam \u003e labels This will create a file called labels, with one population label per line, matching the sample order in your PCA output.\nNow you can use a scripting language like Python (or alternatively R) to load the PCA output and plot it.\nBelow is an example Python script that reads the eigenvector file (output.csv) and the corresponding label file (labels), and generates a PCA plot using seaborn and matplotlib:\nimport pandas as pd import seaborn as sns import matplotlib.pyplot as plt # Load eigenvectors df = pd.read_csv(\"output.csv\", header=None) df.rename(columns={0: \"ID\"}, inplace=True) # Load labels with open(\"labels\") as f: labels = [line.strip() for line in f] if len(labels) != df.shape[0]: raise ValueError(\"Mismatch between number of labels and samples\") df[\"Label\"] = labels # Rename eigenvector columns for i in range(1, df.shape[1] - 1): df.rename(columns={i: f\"PC{i}\"}, inplace=True) # Seaborn aesthetics # Alternatively remove this line for no grid sns.set(style=\"whitegrid\", context=\"talk\") fig, ax = plt.subplots(figsize=(12, 7)) # Plot sns.scatterplot( data=df, x=\"PC1\", y=\"PC2\", hue=\"Label\", palette=\"deep\", s=50, edgecolor=\"black\", ax=ax ) # Title and labels ax.set_title(\"PCA\", fontsize=18) ax.set_xlabel(\"PC1\") ax.set_ylabel(\"PC2\") # Legend outside the plot to the right ax.legend( title=\"Population\", bbox_to_anchor=(1.02, 1), loc=\"upper left\", borderaxespad=0, frameon=True ) # Adjust layout to make room for legend plt.tight_layout(rect=[0, 0, 0.85, 1]) plt.show() The PCA plot below shows the structure observed in my test subset: ",
+  "wordCount" : "885",
+  "inLanguage": "en",
+  "datePublished": "2025-07-29T16:00:00Z",
+  "dateModified": "2025-07-29T16:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://system-777.github.io/popgen-blog/posts/3-pca-analysis/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "system.popgen",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://system-777.github.io/popgen-blog/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://system-777.github.io/popgen-blog/" accesskey="h" title="system.popgen (Alt + H)">system.popgen</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/contact/" title="Contact">
+                    <span>Contact</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Performing PCA on Genetic Data Using PLINK
+    </h1>
+    <div class="post-meta"><span title='2025-07-29 16:00:00 +0000 UTC'>July 29, 2025</span>&nbsp;·&nbsp;5 min
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset.
+Before we begin, we need to prepare a subset of samples we&rsquo;re interested in analyzing.</p>
+<p>To do this, we’ll extract sample information from the <code>.fam</code> file.
+But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.</p>
+<p>The easiest way is to open the corresponding <code>.ind</code> file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad++, and search for the population name, in this case, Sardinian.</p>
+<p>You should find entries like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>        HGDP01075.HO M Sardinian.HO
+</span></span><span style="display:flex;"><span>        HGDP01076.HO M Sardinian.HO
+</span></span><span style="display:flex;"><span>        HGDP01077.HO M Sardinian.HO
+</span></span><span style="display:flex;"><span>        ...
+</span></span></code></pre></div><p>These entries tell us which <strong>IIDs (individual IDs)</strong> belong to Sardinian samples.
+Now take note of these IIDs, for example: HGDP01075.HO.</p>
+<p>Next, open your .fam file (from the previously created PACKEDPED dataset). You’ll see something like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>  1664   HGDP01075.HO 0 0 1 2
+</span></span><span style="display:flex;"><span>  1665   HGDP01076.HO 0 0 1 2
+</span></span><span style="display:flex;"><span>  1666   HGDP01077.HO 0 0 1 2
+</span></span><span style="display:flex;"><span>        ...
+</span></span></code></pre></div><p>Now match the IIDs from the <code>.ind</code> file to those in the .fam file. For each matching line in the .fam, copy the <strong>entire line</strong> into a new file. This new file will be used with PLINK&rsquo;s <code>--keep</code> flag to retain only the samples of interest.</p>
+<p><strong>Note:</strong> Since the <code>.ind</code> and <code>.fam</code> files are row-aligned, if you identify a block of consecutive samples in the <code>.ind</code> file belonging to the same population (e.g., 10 Sardinians in a row), you can safely copy the corresponding 10 lines from the <code>.fam</code> file without having to check each ID manually.</p>
+<p>After selecting a subset of samples of interest — for example, several European populations — and saving them to a file (in this case named <code>samples</code>, without a file extension), we can use PLINK to generate a new dataset:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>plink --bfile data --keep samples --make-bed --out subset
+</span></span></code></pre></div><p>This will create a new binary PLINK dataset (subset.bed, .bim, .fam) containing only the selected individuals.</p>
+<h3 id="running-pca">Running PCA<a hidden class="anchor" aria-hidden="true" href="#running-pca">#</a></h3>
+<p>Now we can run the PCA on the subset:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># --out specifies the output file prefix</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The default number of principal components is 10,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># so &#34;10&#34; could be omitted unless you want to change the number</span>
+</span></span><span style="display:flex;"><span>plink --bfile subset --pca <span style="color:#ae81ff">10</span> --out pca
+</span></span></code></pre></div><p>This will output two files: <code>pca.eigenval</code> and <code>pca.eigenvec</code>. The <code>pca.eigenvec</code> is what you’ll use for plotting or downstream analysis.</p>
+<p>To keep only the IIDs and the principal components (and discard FIDs), you can use the following awk one-liner on Linux:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{$1=&#34;&#34;; sub(/^ /, &#34;&#34;); gsub(/ /, &#34;,&#34;); print}&#39;</span> pca.eigenvec &gt; output.csv
+</span></span></code></pre></div><p>This will generate a CSV-output file where each line contains a sample ID followed by its principal component values.</p>
+<p>The resulting file can be loaded into Python or R for downstream analysis. It’s also compatible with hobbyist tools like Vahaduo — though I personally don’t endorse such platforms, nor do I consider their models accurate or reliable.</p>
+<p>In fact, you may observe with your own dataset that distances can vary significantly depending on how many and which samples are included. For example, if your PCA is based only on a regional subset, much more variance will remain <strong>within</strong> that region. As a result, samples may appear more distant from each other compared to what you’d see in global reference PCA datasets like G25.</p>
+<h3 id="plotting-the-pca">Plotting the PCA<a hidden class="anchor" aria-hidden="true" href="#plotting-the-pca">#</a></h3>
+<p>The previously created CSV-file can be used to make a PCA-plot. However, since the file contains only sample IDs and principal component values — without population labels — we’ll first generate a separate label file to make the plot easier to interpret. To do this, we’ll match each sample in the <code>.fam</code> file to its corresponding population label from the original <code>.ind</code> file. The <code>.ind</code> file contains the population in the third column. We’ll extract that and output it in the same order as the .fam file, so the labels line up with the PCA values.</p>
+<p>Here’s a one-liner using <code>awk</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;NR==FNR {map[$1]=$3; next} {print map[$2]}&#39;</span> v62.0_HO_public.ind data.fam &gt; labels
+</span></span></code></pre></div><p>This will create a file called <code>labels</code>, with one population label per line, matching the sample order in your PCA output.</p>
+<p>Now you can use a scripting language like <strong>Python</strong> (or alternatively <strong>R</strong>) to load the PCA output and plot it.</p>
+<p>Below is an example Python script that reads the eigenvector file (<code>output.csv</code>) and the corresponding label file (<code>labels</code>), and generates a PCA plot using <strong>seaborn</strong> and <strong>matplotlib</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> seaborn <span style="color:#66d9ef">as</span> sns
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Load eigenvectors</span>
+</span></span><span style="display:flex;"><span>df <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#34;output.csv&#34;</span>, header<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)
+</span></span><span style="display:flex;"><span>df<span style="color:#f92672">.</span>rename(columns<span style="color:#f92672">=</span>{<span style="color:#ae81ff">0</span>: <span style="color:#e6db74">&#34;ID&#34;</span>}, inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Load labels</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;labels&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    labels <span style="color:#f92672">=</span> [line<span style="color:#f92672">.</span>strip() <span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> f]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> len(labels) <span style="color:#f92672">!=</span> df<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>(<span style="color:#e6db74">&#34;Mismatch between number of labels and samples&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>df[<span style="color:#e6db74">&#34;Label&#34;</span>] <span style="color:#f92672">=</span> labels
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Rename eigenvector columns</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, df<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>    df<span style="color:#f92672">.</span>rename(columns<span style="color:#f92672">=</span>{i: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;PC</span><span style="color:#e6db74">{</span>i<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>}, inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Seaborn aesthetics</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Alternatively remove this line for no grid</span>
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>set(style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;whitegrid&#34;</span>, context<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;talk&#34;</span>)
+</span></span><span style="display:flex;"><span>fig, ax <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">7</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot</span>
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>scatterplot(
+</span></span><span style="display:flex;"><span>    data<span style="color:#f92672">=</span>df,
+</span></span><span style="display:flex;"><span>    x<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;PC1&#34;</span>,
+</span></span><span style="display:flex;"><span>    y<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;PC2&#34;</span>,
+</span></span><span style="display:flex;"><span>    hue<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Label&#34;</span>,
+</span></span><span style="display:flex;"><span>    palette<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;deep&#34;</span>,
+</span></span><span style="display:flex;"><span>    s<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>,
+</span></span><span style="display:flex;"><span>    edgecolor<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;black&#34;</span>,
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">=</span>ax
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Title and labels</span>
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;PCA&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">18</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_xlabel(<span style="color:#e6db74">&#34;PC1&#34;</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;PC2&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Legend outside the plot to the right</span>
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>legend(
+</span></span><span style="display:flex;"><span>    title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Population&#34;</span>,
+</span></span><span style="display:flex;"><span>    bbox_to_anchor<span style="color:#f92672">=</span>(<span style="color:#ae81ff">1.02</span>, <span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>    loc<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;upper left&#34;</span>,
+</span></span><span style="display:flex;"><span>    borderaxespad<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    frameon<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Adjust layout to make room for legend</span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout(rect<span style="color:#f92672">=</span>[<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0.85</span>, <span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p>The PCA plot below shows the structure observed in my test subset:
+<img alt="PCA Plot" loading="lazy" src="/popgen-blog/images/Figure_1.png"></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>{/* Reversed navigation: newer post on left, older post on right */}}
+<nav class="paginav">
+  <a class="next" href="https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/">
+    <span class="title">Prev »</span>
+    <br>
+    <span>From EIGENSTRAT to PACKEDPED</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://system-777.github.io/popgen-blog/">system.popgen</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

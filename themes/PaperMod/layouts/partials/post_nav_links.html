@@ -1,0 +1,20 @@
+{/* Reversed navigation: newer post on left, older post on right */}}
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- if and (gt (len $pages) 1) (in $pages . ) }}
+<nav class="paginav">
+  {{- with $pages.Next . }}
+  <a class="prev" href="{{ .Permalink }}">
+    <span class="title">« {{ i18n "next_page" }}</span>
+    <br>
+    <span>{{- .Title -}}</span>
+  </a>
+  {{- end }}
+  {{- with $pages.Prev . }}
+  <a class="next" href="{{ .Permalink }}">
+    <span class="title">{{ i18n "prev_page" }} »</span>
+    <br>
+    <span>{{- .Title -}}</span>
+  </a>
+  {{- end }}
+</nav>
+{{- end }}
