@@ -4,8 +4,7 @@ draft = false
 title = 'Performing PCA on Genetic Data Using Smartpca'
 +++
 
-This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, **
-** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
+This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, **smartpca** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
 
 Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: [From EIGENSTRAT to PACKEDPED](https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/).
 

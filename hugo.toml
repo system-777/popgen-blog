@@ -2,6 +2,7 @@ baseURL = "https://system-777.github.io/popgen-blog/"
 languageCode = "en-us"
 title = "system.popgen"
 theme = "PaperMod"
+publishDir = "docs"
 
 [params]
   ShowReadingTime = true
