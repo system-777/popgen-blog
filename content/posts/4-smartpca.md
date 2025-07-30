@@ -59,7 +59,7 @@ numoutliter:      0
 lsqproject:       YES
 numthreads:       5
 ```
-`lsqproject: YES` enables projection mode, meaning projected samples don’t influence the PCA axes. In this example, all samples are high-coverage modern individuals, so projection isn’t technically needed—but I demonstrate it here for completeness. Save the parameter file with a name like pca_param (no extension).
+`lsqproject: YES` enables projection mode, meaning projected samples don’t influence the PCA axes. In this example, all samples are high-coverage modern individuals, so projection isn’t technically needed—but I demonstrate it here for completeness. Save the parameter file with a name like `pca_param` (no extension).
 
 To project samples, you’ll need to modify the `.ind` file of your EIGENSTRAT dataset. Change the third column from `Case` to `P`:
 ``` Text
