@@ -1,8 +1,11 @@
 baseURL = "https://system-777.github.io/popgen-blog/"
 languageCode = "en-us"
 title = "system.popgen"
+description = "A technical blog on population genetics, ancient DNA, bioinformatics tools, and pipelines."
+author = "system-777"
 theme = "PaperMod"
 publishDir = "docs"
+enableRobotsTXT = true
 
 [params]
   ShowReadingTime = true
