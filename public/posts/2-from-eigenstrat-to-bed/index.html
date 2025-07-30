@@ -1,45 +1,507 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>From EIGENSTRAT to PACKEDPED | system.popgen</title><meta name=keywords content><meta name=description content="The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>From EIGENSTRAT to PACKEDPED | system.popgen</title>
+<meta name="keywords" content="">
+<meta name="description" content="The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.
 PACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.
 Downloading PLINK
-I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release."><meta name=author content><link rel=canonical href=https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/><link crossorigin=anonymous href=/popgen-blog/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as=style><link rel=icon href=https://system-777.github.io/popgen-blog/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://system-777.github.io/popgen-blog/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://system-777.github.io/popgen-blog/favicon-32x32.png><link rel=apple-touch-icon href=https://system-777.github.io/popgen-blog/apple-touch-icon.png><link rel=mask-icon href=https://system-777.github.io/popgen-blog/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><style>@import 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap';.post-entry,.first-entry{background:var(--entry);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,8%);transition:all .3s ease;border:1px solid var(--border);margin-bottom:2rem;overflow:hidden;padding:1.5rem}.post-entry:hover,.first-entry:hover{}.entry-header h2{font-size:1.4rem;font-weight:700;margin-bottom:.75rem;line-height:1.3}.entry-header h2 a{color:var(--primary);text-decoration:none;transition:color .3s ease}.entry-header h2 a:hover{color:#1e3a8a}.entry-content{color:var(--content);line-height:1.6;margin-bottom:1rem}.entry-footer{border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem;font-size:.875rem;color:var(--secondary);display:flex;justify-content:space-between;align-items:center}.logo a{font-family:jetbrains mono,monaco,consolas,monospace;font-weight:600;font-size:1.3rem;letter-spacing:-.02em;background:linear-gradient(135deg,#1e40af,#1e3a8a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;transition:all .3s ease}.main{padding-top:2rem}.post-entry,.first-entry{animation:slideUp .6s ease-out}@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}.post-entry:nth-child(1){animation-delay:.1s}.post-entry:nth-child(2){animation-delay:.2s}.post-entry:nth-child(3){animation-delay:.3s}.post-entry:nth-child(4){animation-delay:.4s}.dark .post-entry,.dark .first-entry{box-shadow:0 2px 8px rgba(0,0,0,.3)}.dark .post-entry:hover,.dark .first-entry:hover{}@media(max-width:768px){.post-entry,.first-entry{margin-bottom:1.5rem;padding:1rem}.entry-footer{flex-direction:column;align-items:flex-start;gap:.5rem}}</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/"><meta property="og:site_name" content="system.popgen"><meta property="og:title" content="From EIGENSTRAT to PACKEDPED"><meta property="og:description" content="The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.
+I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.">
+<meta name="author" content="">
+<link rel="canonical" href="https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/">
+<link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://system-777.github.io/popgen-blog/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://system-777.github.io/popgen-blog/apple-touch-icon.png">
+<link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+ 
+.post-entry, .first-entry {
+    background: var(--entry);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+.post-entry:hover, .first-entry:hover {
+     
+}
+
+ 
+.entry-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.entry-header h2 a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.entry-header h2 a:hover {
+    color: #1e3a8a;  
+}
+
+ 
+.entry-content {
+    color: var(--content);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+ 
+.entry-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+ 
+.main {
+    padding-top: 2rem;
+}
+
+ 
+.post-entry, .first-entry {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-entry:nth-child(1) { animation-delay: 0.1s; }
+.post-entry:nth-child(2) { animation-delay: 0.2s; }
+.post-entry:nth-child(3) { animation-delay: 0.3s; }
+.post-entry:nth-child(4) { animation-delay: 0.4s; }
+
+.dark .post-entry, .dark .first-entry {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .post-entry:hover, .dark .first-entry:hover {
+     
+}
+
+ 
+@media (max-width: 768px) {
+    .post-entry, .first-entry {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .entry-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/">
+  <meta property="og:site_name" content="system.popgen">
+  <meta property="og:title" content="From EIGENSTRAT to PACKEDPED">
+  <meta property="og:description" content="The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.
 PACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.
-Downloading PLINK I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release."><meta property="og:locale" content="en-us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-07-29T15:30:00+00:00"><meta property="article:modified_time" content="2025-07-29T15:30:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="From EIGENSTRAT to PACKEDPED"><meta name=twitter:description content="The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.
+Downloading PLINK I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-29T15:30:00+00:00">
+    <meta property="article:modified_time" content="2025-07-29T15:30:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="From EIGENSTRAT to PACKEDPED">
+<meta name="twitter:description" content="The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.
 PACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.
 Downloading PLINK
-I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release."><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://system-777.github.io/popgen-blog/posts/"},{"@type":"ListItem","position":2,"name":"From EIGENSTRAT to PACKEDPED","item":"https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"From EIGENSTRAT to PACKEDPED","name":"From EIGENSTRAT to PACKEDPED","description":"The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.\nPACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.\nDownloading PLINK I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.\n","keywords":[],"articleBody":"The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.\nPACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.\nDownloading PLINK I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.\nChoose and download the binary suitable for your operating system.\nIf you’re on Linux or WSL, you can make the binary globally accessible like this:\n# Make PLINK globally accessible # Run this from the directory where you downloaded the binary sudo cp plink /usr/local/bin/ # Test if PLINK works plink Compiling EIGENSOFT Before we can use PLINK on the downloaded dataset, we have to convert it to PACKEDPED format. We will use the convertf tool from the EIGENSOFT toolset.\nInstall Dependencies First we install the required dependencies:\nsudo apt update sudo apt install -y build-essential gfortran liblapack-dev liblapacke-dev libgsl-dev sudo apt install -y libopenblas-dev Download and Compile EIGENSOFT Then clone the GitHub repository, enter the src directory, and compile:\n# Install git first with: sudo apt install git git clone https://github.com/DReichLab/EIG cd EIG/src LDLIBS=\"-llapacke\" make This will generate several necessary binaries. The most relevant ones are: convertf and mergeit in the src folder, and smartpca in the eigensrc subdirectory. You can confirm the files were compiled with:\nls Make tools globally accessible To use convertf and mergeit from anywhere, move them to a global location like /usr/local/bin/:\nsudo cp convertf mergeit /usr/local/bin/ Accessing smartpca If the build was successful, you’ll find smartpca in the eigensrc directory:\n# Navigate into the eigensrc folder cd ~/EIG/src/eigensrc # Check files in folder ls Make it globally accessible:\nsudo cp smartpca /usr/local/bin/ I will provide examples on using smartpca for principal component analysis (PCA) in another post. Since it was compiled alongside the other EIGENSOFT tools, I’m just mentioning it here for completeness.\nConverting from EIGENSTRAT to PACKEDPED Now we can convert the EIGENSTRAT dataset to PACKEDPED. Navigate into the folder or directory you store the dataset. Then with a text editor of your choice generate a file with the following content (adjust the input prefixes to those of your dataset):\ngenotypename: v62.0_HO_public.geno snpname: v62.0_HO_public.snp indivname: v62.0_HO_public.ind outputformat: PACKEDPED genotypeoutname: data.bed snpoutname: data.bim indivoutname: data.fam Save the file with any name you like, I named mine simply parameter (no file extension). This file tells convertf what to do. Start the conversion with:\nconvertf -p parameter The process may take a while, as the dataset is large.\nOnce complete, you’ll have a set of PLINK-compatible binary files: data.bed, data.bim, and data.fam, ready for downstream processing.\n","wordCount":"465","inLanguage":"en","datePublished":"2025-07-29T15:30:00Z","dateModified":"2025-07-29T15:30:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/"},"publisher":{"@type":"Organization","name":"system.popgen","logo":{"@type":"ImageObject","url":"https://system-777.github.io/popgen-blog/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://system-777.github.io/popgen-blog/ accesskey=h title="system.popgen (Alt + H)">system.popgen</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
-<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://system-777.github.io/popgen-blog/ title=Home><span>Home</span></a></li><li><a href=https://system-777.github.io/popgen-blog/contact/ title=Contact><span>Contact</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">From EIGENSTRAT to PACKEDPED</h1><div class=post-meta><span title='2025-07-29 15:30:00 +0000 UTC'>July 29, 2025</span>&nbsp;·&nbsp;3 min</div></header><div class=post-content><p>The files downloaded in the previous blog post are in <strong>EIGENSTRAT</strong> format. In this post, we’ll look at how to convert them to <strong>PACKEDPED</strong> format.</p><p>PACKEDPED format allows for easier downstream processing using the <strong>PLINK</strong> toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.</p><h3 id=downloading-plink>Downloading PLINK<a hidden class=anchor aria-hidden=true href=#downloading-plink>#</a></h3><p>I use <a href=https://www.cog-genomics.org/plink/>PLINK 1.9</a>. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.</p><p>Choose and download the binary suitable for your operating system.<br>If you&rsquo;re on Linux or WSL, you can make the binary globally accessible like this:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># Make PLINK globally accessible</span>
-</span></span><span style=display:flex><span><span style=color:#75715e># Run this from the directory where you downloaded the binary</span>
-</span></span><span style=display:flex><span>sudo cp plink /usr/local/bin/
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># Test if PLINK works</span>
-</span></span><span style=display:flex><span>plink
-</span></span></code></pre></div><h3 id=compiling-eigensoft>Compiling EIGENSOFT<a hidden class=anchor aria-hidden=true href=#compiling-eigensoft>#</a></h3><p>Before we can use PLINK on the downloaded dataset, we have to convert it to PACKEDPED format. We will use the convertf tool from the EIGENSOFT toolset.</p><h4 id=install-dependencies>Install Dependencies<a hidden class=anchor aria-hidden=true href=#install-dependencies>#</a></h4><p>First we install the required dependencies:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>sudo apt update
-</span></span><span style=display:flex><span>sudo apt install -y build-essential gfortran liblapack-dev liblapacke-dev libgsl-dev
-</span></span><span style=display:flex><span>sudo apt install -y libopenblas-dev
-</span></span></code></pre></div><h4 id=download-and-compile-eigensoft>Download and Compile EIGENSOFT<a hidden class=anchor aria-hidden=true href=#download-and-compile-eigensoft>#</a></h4><p>Then clone the GitHub repository, enter the <code>src</code> directory, and compile:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># Install git first with: sudo apt install git</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>git clone https://github.com/DReichLab/EIG
-</span></span><span style=display:flex><span>cd EIG/src
-</span></span><span style=display:flex><span>LDLIBS<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;-llapacke&#34;</span> make
-</span></span></code></pre></div><p>This will generate several necessary binaries. The most relevant ones are: <code>convertf</code> and <code>mergeit</code> in the <code>src</code> folder, and <code>smartpca</code> in the <code>eigensrc</code> subdirectory. You can confirm the files were compiled with:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>ls
-</span></span></code></pre></div><h5 id=make-tools-globally-accessible>Make tools globally accessible<a hidden class=anchor aria-hidden=true href=#make-tools-globally-accessible>#</a></h5><p>To use <code>convertf</code> and <code>mergeit</code> from anywhere, move them to a global location like /usr/local/bin/:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>sudo cp convertf mergeit /usr/local/bin/
-</span></span></code></pre></div><h4 id=accessing--smartpca>Accessing smartpca<a hidden class=anchor aria-hidden=true href=#accessing--smartpca>#</a></h4><p>If the build was successful, you’ll find <code>smartpca</code> in the eigensrc directory:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># Navigate into the eigensrc folder</span>
-</span></span><span style=display:flex><span>cd ~/EIG/src/eigensrc
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># Check files in folder</span>
-</span></span><span style=display:flex><span>ls
-</span></span></code></pre></div><p>Make it globally accessible:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>sudo cp smartpca /usr/local/bin/
-</span></span></code></pre></div><p>I will provide examples on using smartpca for principal component analysis (PCA) in another post. Since it was compiled alongside the other EIGENSOFT tools, I’m just mentioning it here for completeness.</p><h3 id=converting-from-eigenstrat-to-packedped>Converting from EIGENSTRAT to PACKEDPED<a hidden class=anchor aria-hidden=true href=#converting-from-eigenstrat-to-packedped>#</a></h3><p>Now we can convert the EIGENSTRAT dataset to PACKEDPED. Navigate into the folder or directory you store the dataset. Then with a text editor of your choice generate a file with the following content (adjust the input prefixes to those of your dataset):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text><span style=display:flex><span>genotypename:    v62.0_HO_public.geno 
-</span></span><span style=display:flex><span>snpname:         v62.0_HO_public.snp 
-</span></span><span style=display:flex><span>indivname:       v62.0_HO_public.ind 
-</span></span><span style=display:flex><span>outputformat:    PACKEDPED 
-</span></span><span style=display:flex><span>genotypeoutname: data.bed 
-</span></span><span style=display:flex><span>snpoutname:      data.bim 
-</span></span><span style=display:flex><span>indivoutname:    data.fam
-</span></span></code></pre></div><p>Save the file with any name you like, I named mine simply parameter (no file extension). This file tells convertf what to do. Start the conversion with:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>convertf -p parameter
-</span></span></code></pre></div><p>The process may take a while, as the dataset is large.</p><p>Once complete, you’ll have a set of PLINK-compatible binary files: <code>data.bed</code>, <code>data.bim</code>, and <code>data.fam</code>, ready for downstream processing.</p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://system-777.github.io/popgen-blog/posts/1-getting-started/><span class=title>« Prev</span><br><span>Getting Started with Population Genetic Analysis</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://system-777.github.io/popgen-blog/>system.popgen</a></span> ·
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
+I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://system-777.github.io/popgen-blog/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "From EIGENSTRAT to PACKEDPED",
+      "item": "https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "From EIGENSTRAT to PACKEDPED",
+  "name": "From EIGENSTRAT to PACKEDPED",
+  "description": "The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.\nPACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.\nDownloading PLINK I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.\nPACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.\nDownloading PLINK I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.\nChoose and download the binary suitable for your operating system.\nIf you’re on Linux or WSL, you can make the binary globally accessible like this:\n# Make PLINK globally accessible # Run this from the directory where you downloaded the binary sudo cp plink /usr/local/bin/ # Test if PLINK works plink Compiling EIGENSOFT Before we can use PLINK on the downloaded dataset, we have to convert it to PACKEDPED format. We will use the convertf tool from the EIGENSOFT toolset.\nInstall Dependencies First we install the required dependencies:\nsudo apt update sudo apt install -y build-essential gfortran liblapack-dev liblapacke-dev libgsl-dev sudo apt install -y libopenblas-dev Download and Compile EIGENSOFT Then clone the GitHub repository, enter the src directory, and compile:\n# Install git first with: sudo apt install git git clone https://github.com/DReichLab/EIG cd EIG/src LDLIBS=\"-llapacke\" make This will generate several necessary binaries. The most relevant ones are: convertf and mergeit in the src folder, and smartpca in the eigensrc subdirectory. You can confirm the files were compiled with:\nls Make tools globally accessible To use convertf and mergeit from anywhere, move them to a global location like /usr/local/bin/:\nsudo cp convertf mergeit /usr/local/bin/ Accessing smartpca If the build was successful, you’ll find smartpca in the eigensrc directory:\n# Navigate into the eigensrc folder cd ~/EIG/src/eigensrc # Check files in folder ls Make it globally accessible:\nsudo cp smartpca /usr/local/bin/ I will provide examples on using smartpca for principal component analysis (PCA) in another post. Since it was compiled alongside the other EIGENSOFT tools, I’m just mentioning it here for completeness.\nConverting from EIGENSTRAT to PACKEDPED Now we can convert the EIGENSTRAT dataset to PACKEDPED. Navigate into the folder or directory you store the dataset. Then with a text editor of your choice generate a file with the following content (adjust the input prefixes to those of your dataset):\ngenotypename: v62.0_HO_public.geno snpname: v62.0_HO_public.snp indivname: v62.0_HO_public.ind outputformat: PACKEDPED genotypeoutname: data.bed snpoutname: data.bim indivoutname: data.fam Save the file with any name you like, I named mine simply parameter (no file extension). This file tells convertf what to do. Start the conversion with:\nconvertf -p parameter The process may take a while, as the dataset is large.\nOnce complete, you’ll have a set of PLINK-compatible binary files: data.bed, data.bim, and data.fam, ready for downstream processing.\n",
+  "wordCount" : "465",
+  "inLanguage": "en",
+  "datePublished": "2025-07-29T15:30:00Z",
+  "dateModified": "2025-07-29T15:30:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "system.popgen",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://system-777.github.io/popgen-blog/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://system-777.github.io/popgen-blog/" accesskey="h" title="system.popgen (Alt + H)">system.popgen</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/contact/" title="Contact">
+                    <span>Contact</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      From EIGENSTRAT to PACKEDPED
+    </h1>
+    <div class="post-meta"><span title='2025-07-29 15:30:00 +0000 UTC'>July 29, 2025</span>&nbsp;·&nbsp;3 min
+
+</div>
+  </header> 
+  <div class="post-content"><p>The files downloaded in the previous blog post are in <strong>EIGENSTRAT</strong> format. In this post, we’ll look at how to convert them to <strong>PACKEDPED</strong> format.</p>
+<p>PACKEDPED format allows for easier downstream processing using the <strong>PLINK</strong> toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.</p>
+<h3 id="downloading-plink">Downloading PLINK<a hidden class="anchor" aria-hidden="true" href="#downloading-plink">#</a></h3>
+<p>I use <a href="https://www.cog-genomics.org/plink/">PLINK 1.9</a>. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.</p>
+<p>Choose and download the binary suitable for your operating system.<br>
+If you&rsquo;re on Linux or WSL, you can make the binary globally accessible like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Make PLINK globally accessible</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Run this from the directory where you downloaded the binary</span>
+</span></span><span style="display:flex;"><span>sudo cp plink /usr/local/bin/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Test if PLINK works</span>
+</span></span><span style="display:flex;"><span>plink
+</span></span></code></pre></div><h3 id="compiling-eigensoft">Compiling EIGENSOFT<a hidden class="anchor" aria-hidden="true" href="#compiling-eigensoft">#</a></h3>
+<p>Before we can use PLINK on the downloaded dataset, we have to convert it to PACKEDPED format. We will use the convertf tool from the EIGENSOFT toolset.</p>
+<h4 id="install-dependencies">Install Dependencies<a hidden class="anchor" aria-hidden="true" href="#install-dependencies">#</a></h4>
+<p>First we install the required dependencies:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt update
+</span></span><span style="display:flex;"><span>sudo apt install -y build-essential gfortran liblapack-dev liblapacke-dev libgsl-dev
+</span></span><span style="display:flex;"><span>sudo apt install -y libopenblas-dev
+</span></span></code></pre></div><h4 id="download-and-compile-eigensoft">Download and Compile EIGENSOFT<a hidden class="anchor" aria-hidden="true" href="#download-and-compile-eigensoft">#</a></h4>
+<p>Then clone the GitHub repository, enter the <code>src</code> directory, and compile:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Install git first with: sudo apt install git</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git clone https://github.com/DReichLab/EIG
+</span></span><span style="display:flex;"><span>cd EIG/src
+</span></span><span style="display:flex;"><span>LDLIBS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-llapacke&#34;</span> make
+</span></span></code></pre></div><p>This will generate several necessary binaries. The most relevant ones are: <code>convertf</code> and <code>mergeit</code> in the <code>src</code> folder, and <code>smartpca</code> in the <code>eigensrc</code> subdirectory. You can confirm the files were compiled with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls
+</span></span></code></pre></div><h5 id="make-tools-globally-accessible">Make tools globally accessible<a hidden class="anchor" aria-hidden="true" href="#make-tools-globally-accessible">#</a></h5>
+<p>To use <code>convertf</code> and <code>mergeit</code> from anywhere, move them to a global location like /usr/local/bin/:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo cp convertf mergeit /usr/local/bin/
+</span></span></code></pre></div><h4 id="accessing--smartpca">Accessing  smartpca<a hidden class="anchor" aria-hidden="true" href="#accessing--smartpca">#</a></h4>
+<p>If the build was successful, you’ll find <code>smartpca</code> in the eigensrc directory:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Navigate into the eigensrc folder</span>
+</span></span><span style="display:flex;"><span>cd ~/EIG/src/eigensrc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Check files in folder</span>
+</span></span><span style="display:flex;"><span>ls
+</span></span></code></pre></div><p>Make it globally accessible:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo cp smartpca /usr/local/bin/
+</span></span></code></pre></div><p>I will provide examples on using smartpca for principal component analysis (PCA) in another post. Since it was compiled alongside the other EIGENSOFT tools, I’m just mentioning it here for completeness.</p>
+<h3 id="converting-from-eigenstrat-to-packedped">Converting from EIGENSTRAT to PACKEDPED<a hidden class="anchor" aria-hidden="true" href="#converting-from-eigenstrat-to-packedped">#</a></h3>
+<p>Now we can convert the EIGENSTRAT dataset to PACKEDPED. Navigate into the folder or directory you store the dataset. Then with a text editor of your choice generate a file with the following content (adjust the input prefixes to those of your dataset):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>genotypename:    v62.0_HO_public.geno 
+</span></span><span style="display:flex;"><span>snpname:         v62.0_HO_public.snp 
+</span></span><span style="display:flex;"><span>indivname:       v62.0_HO_public.ind 
+</span></span><span style="display:flex;"><span>outputformat:    PACKEDPED 
+</span></span><span style="display:flex;"><span>genotypeoutname: data.bed 
+</span></span><span style="display:flex;"><span>snpoutname:      data.bim 
+</span></span><span style="display:flex;"><span>indivoutname:    data.fam
+</span></span></code></pre></div><p>Save the file with any name you like, I named mine simply parameter (no file extension). This file tells convertf what to do. Start the conversion with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>convertf -p parameter
+</span></span></code></pre></div><p>The process may take a while, as the dataset is large.</p>
+<p>Once complete, you’ll have a set of PLINK-compatible binary files: <code>data.bed</code>, <code>data.bim</code>, and <code>data.fam</code>, ready for downstream processing.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/">
+    <span class="title">« Next</span>
+    <br>
+    <span>Performing PCA on Genetic Data Using PLINK</span>
+  </a>
+  <a class="next" href="https://system-777.github.io/popgen-blog/posts/1-getting-started/">
+    <span class="title">Prev »</span>
+    <br>
+    <span>Getting Started with Population Genetic Analysis</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://system-777.github.io/popgen-blog/">system.popgen</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

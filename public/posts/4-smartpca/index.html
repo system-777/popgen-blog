@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Performing PCA on Genetic Data Using Smartpca | system.popgen</title>
+<meta name="keywords" content="">
+<meta name="description" content="This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, **
+** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
+Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.
+As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.">
+<meta name="author" content="">
+<link rel="canonical" href="https://system-777.github.io/popgen-blog/posts/4-smartpca/">
+<link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://system-777.github.io/popgen-blog/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://system-777.github.io/popgen-blog/apple-touch-icon.png">
+<link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/posts/4-smartpca/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+ 
+.post-entry, .first-entry {
+    background: var(--entry);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+.post-entry:hover, .first-entry:hover {
+     
+}
+
+ 
+.entry-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.entry-header h2 a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.entry-header h2 a:hover {
+    color: #1e3a8a;  
+}
+
+ 
+.entry-content {
+    color: var(--content);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+ 
+.entry-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+ 
+.main {
+    padding-top: 2rem;
+}
+
+ 
+.post-entry, .first-entry {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-entry:nth-child(1) { animation-delay: 0.1s; }
+.post-entry:nth-child(2) { animation-delay: 0.2s; }
+.post-entry:nth-child(3) { animation-delay: 0.3s; }
+.post-entry:nth-child(4) { animation-delay: 0.4s; }
+
+.dark .post-entry, .dark .first-entry {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .post-entry:hover, .dark .first-entry:hover {
+     
+}
+
+ 
+@media (max-width: 768px) {
+    .post-entry, .first-entry {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .entry-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/posts/4-smartpca/">
+  <meta property="og:site_name" content="system.popgen">
+  <meta property="og:title" content="Performing PCA on Genetic Data Using Smartpca">
+  <meta property="og:description" content="This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, ** ** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
+Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.
+As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-30T20:47:41+02:00">
+    <meta property="article:modified_time" content="2025-07-30T20:47:41+02:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Performing PCA on Genetic Data Using Smartpca">
+<meta name="twitter:description" content="This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, **
+** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
+Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.
+As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://system-777.github.io/popgen-blog/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Performing PCA on Genetic Data Using Smartpca",
+      "item": "https://system-777.github.io/popgen-blog/posts/4-smartpca/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Performing PCA on Genetic Data Using Smartpca",
+  "name": "Performing PCA on Genetic Data Using Smartpca",
+  "description": "This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, ** ** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.\nSmartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.\nAs before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, ** ** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.\nSmartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.\nAs before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.\nLD Pruning # Window size: 50 SNPs # Step size: 5 SNPs # LD threshold: r² \u003e 0.2 will be pruned plink --bfile input --indep-pairwise 50 5 0.2 # Extract the pruned SNPs into a new dataset plink --bfile input --extract plink.prune.in --make-bed --out pruned_data Note: If you’re working with low-coverage ancient samples, applying LD pruning directly to a mixed dataset (modern + ancient) may introduce bias, since SNP retention will favor samples with higher coverage. A better approach:\nPrune only the modern dataset. Use the same pruned SNP list (plink.prune.in) to extract SNPs from the ancient dataset. Merge both datasets. Here’s how you can do that:\n# Step 1: Prune modern samples plink --bfile modern --indep-pairwise 50 5 0.2 # Step 2: Create pruned datasets for both groups plink --bfile modern --extract plink.prune.in --make-bed --out pruned_modern plink --bfile ancient --extract plink.prune.in --make-bed --out ancient_extracted # Step 3: Merge datasets plink --bfile pruned_modern --bmerge ancient_extracted --make-bed --out final Creating the Parameter File Like most Reich Lab tools, smartpca uses a parameter file to specify input and output options. Here’s a minimal example:\ngenotypename: pca.geno snpname: pca.snp indivname: pca.ind evecoutname: pca.evec evaloutname: pca.eval altnormstyle: NO numoutevec: 10 numoutliter: 0 lsqproject: YES numthreads: 5 lsqproject: YES enables projection mode, meaning projected samples don’t influence the PCA axes. In this example, all samples are high-coverage modern individuals, so projection isn’t technically needed—but I demonstrate it here for completeness. Save the parameter file with a name like pca_param (no extension).\nTo project samples, you’ll need to modify the .ind file of your EIGENSTRAT dataset. Change the third column from Case to P:\n... 2032:TLA018.HO M Case 2033:TLA019.HO M P 2034:TLA020.HO M Case ... Running smartpca Now we run smartpca with:\nsmartpca -p pca_param This generates two files: pca.eigenval (lists how much variance each eigenvector explains) and pca.evec (contains sample IDs and principal component values).\nPreparing for Plotting To make the output compatible with the plotting script from the previous post, convert the .evec file to CSV:\nawk '{ $NF=\"\"; sub(/[ \\t]+$/, \"\"); gsub(/[ \\t]+/, \",\"); print }' pca.evec \u003e smartpca.csv Then, open the resulting file and manually delete the first line (which begins with #eigvals).\nFinal Plot After loading the cleaned CSV into the plotting script, this is the resulting plot for my subset: ",
+  "wordCount" : "498",
+  "inLanguage": "en",
+  "datePublished": "2025-07-30T20:47:41+02:00",
+  "dateModified": "2025-07-30T20:47:41+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://system-777.github.io/popgen-blog/posts/4-smartpca/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "system.popgen",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://system-777.github.io/popgen-blog/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://system-777.github.io/popgen-blog/" accesskey="h" title="system.popgen (Alt + H)">system.popgen</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/contact/" title="Contact">
+                    <span>Contact</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Performing PCA on Genetic Data Using Smartpca
+    </h1>
+    <div class="post-meta"><span title='2025-07-30 20:47:41 +0200 CEST'>July 30, 2025</span>&nbsp;·&nbsp;3 min
+
+</div>
+  </header> 
+  <div class="post-content"><p>This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, **
+** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.</p>
+<p>Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: <a href="https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/">From EIGENSTRAT to PACKEDPED</a>.</p>
+<p>As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform <strong>Linkage Disequilibrium (LD) pruning</strong>, which helps reduce SNP redundancy and improves the detection of population structure in PCA.</p>
+<h3 id="ld-pruning">LD Pruning<a hidden class="anchor" aria-hidden="true" href="#ld-pruning">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Window size: 50 SNPs</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Step size: 5 SNPs</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LD threshold: r² &gt; 0.2 will be pruned</span>
+</span></span><span style="display:flex;"><span>plink --bfile input --indep-pairwise <span style="color:#ae81ff">50</span> <span style="color:#ae81ff">5</span> 0.2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Extract the pruned SNPs into a new dataset</span>
+</span></span><span style="display:flex;"><span>plink --bfile input --extract plink.prune.in --make-bed --out pruned_data
+</span></span></code></pre></div><p><strong>Note:</strong> If you’re working with low-coverage ancient samples, applying LD pruning directly to a mixed dataset (modern + ancient) may introduce bias, since SNP retention will favor samples with higher coverage. A better approach:</p>
+<ol>
+<li>Prune only the modern dataset.</li>
+<li>Use the same pruned SNP list (plink.prune.in) to extract SNPs from the ancient dataset.</li>
+<li>Merge both datasets.</li>
+</ol>
+<p>Here’s how you can do that:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Step 1: Prune modern samples</span>
+</span></span><span style="display:flex;"><span>plink --bfile modern --indep-pairwise <span style="color:#ae81ff">50</span> <span style="color:#ae81ff">5</span> 0.2 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Step 2: Create pruned datasets for both groups</span>
+</span></span><span style="display:flex;"><span>plink --bfile modern --extract plink.prune.in --make-bed --out pruned_modern
+</span></span><span style="display:flex;"><span>plink --bfile ancient --extract plink.prune.in --make-bed --out ancient_extracted
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Step 3: Merge datasets</span>
+</span></span><span style="display:flex;"><span>plink --bfile pruned_modern --bmerge ancient_extracted --make-bed --out final
+</span></span></code></pre></div><hr>
+<h3 id="creating-the-parameter-file">Creating the Parameter File<a hidden class="anchor" aria-hidden="true" href="#creating-the-parameter-file">#</a></h3>
+<p>Like most Reich Lab tools, smartpca uses a parameter file to specify input and output options. Here&rsquo;s a minimal example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>genotypename:     pca.geno
+</span></span><span style="display:flex;"><span>snpname:          pca.snp
+</span></span><span style="display:flex;"><span>indivname:        pca.ind
+</span></span><span style="display:flex;"><span>evecoutname:      pca.evec
+</span></span><span style="display:flex;"><span>evaloutname:      pca.eval
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>altnormstyle:     NO 
+</span></span><span style="display:flex;"><span>numoutevec:       10
+</span></span><span style="display:flex;"><span>numoutliter:      0
+</span></span><span style="display:flex;"><span>lsqproject:       YES
+</span></span><span style="display:flex;"><span>numthreads:       5
+</span></span></code></pre></div><p><code>lsqproject: YES</code> enables projection mode, meaning projected samples don’t influence the PCA axes. In this example, all samples are high-coverage modern individuals, so projection isn’t technically needed—but I demonstrate it here for completeness. Save the parameter file with a name like pca_param (no extension).</p>
+<p>To project samples, you’ll need to modify the <code>.ind</code> file of your EIGENSTRAT dataset. Change the third column from <code>Case</code> to <code>P</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>      ...
+</span></span><span style="display:flex;"><span>      2032:TLA018.HO M       Case
+</span></span><span style="display:flex;"><span>      2033:TLA019.HO M       P
+</span></span><span style="display:flex;"><span>      2034:TLA020.HO M       Case
+</span></span><span style="display:flex;"><span>      ...
+</span></span></code></pre></div><hr>
+<h3 id="running-smartpca">Running smartpca<a hidden class="anchor" aria-hidden="true" href="#running-smartpca">#</a></h3>
+<p>Now we run smartpca with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>smartpca -p pca_param
+</span></span></code></pre></div><p>This generates two files: <code>pca.eigenval</code> (lists how much variance each eigenvector explains) and <code>pca.evec</code> (contains sample IDs and principal component values).</p>
+<hr>
+<h3 id="preparing-for-plotting">Preparing for Plotting<a hidden class="anchor" aria-hidden="true" href="#preparing-for-plotting">#</a></h3>
+<p>To make the output compatible with the plotting script from the previous post, convert the <code>.evec</code> file to CSV:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{ $NF=&#34;&#34;; sub(/[ \t]+$/, &#34;&#34;); gsub(/[ \t]+/, &#34;,&#34;); print }&#39;</span> pca.evec &gt; smartpca.csv
+</span></span></code></pre></div><p>Then, open the resulting file and manually delete the first line (which begins with <code>#eigvals</code>).</p>
+<hr>
+<h3 id="final-plot">Final Plot<a hidden class="anchor" aria-hidden="true" href="#final-plot">#</a></h3>
+<p>After loading the cleaned CSV into the plotting script, this is the resulting plot for my subset:
+<img alt="PCA Plot" loading="lazy" src="/popgen-blog/images/Figure_2.png"></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/">
+    <span class="title">Prev »</span>
+    <br>
+    <span>Performing PCA on Genetic Data Using PLINK</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://system-777.github.io/popgen-blog/">system.popgen</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
