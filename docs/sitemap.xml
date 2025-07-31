@@ -2,20 +2,44 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://system-777.github.io/popgen-blog/tags/convertf/</loc>
+    <lastmod>2025-07-30T20:47:41+02:00</lastmod>
+  </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/pca/</loc>
+    <lastmod>2025-07-30T20:47:41+02:00</lastmod>
+  </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/4-smartpca/</loc>
+    <lastmod>2025-07-30T20:47:41+02:00</lastmod>
+  </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/plink/</loc>
     <lastmod>2025-07-30T20:47:41+02:00</lastmod>
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/</loc>
     <lastmod>2025-07-30T20:47:41+02:00</lastmod>
   </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/smartpca/</loc>
+    <lastmod>2025-07-30T20:47:41+02:00</lastmod>
+  </url><url>
     <loc>https://system-777.github.io/popgen-blog/</loc>
+    <lastmod>2025-07-30T20:47:41+02:00</lastmod>
+  </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/</loc>
     <lastmod>2025-07-30T20:47:41+02:00</lastmod>
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/3-pca-analysis/</loc>
     <lastmod>2025-07-29T16:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/eigenstrat/</loc>
+    <lastmod>2025-07-29T15:30:00+00:00</lastmod>
+  </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/</loc>
     <lastmod>2025-07-29T15:30:00+00:00</lastmod>
+  </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/packedped/</loc>
+    <lastmod>2025-07-29T15:30:00+00:00</lastmod>
+  </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/genetic-data/</loc>
+    <lastmod>2025-07-29T15:00:00+00:00</lastmod>
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/1-getting-started/</loc>
     <lastmod>2025-07-29T15:00:00+00:00</lastmod>
@@ -23,7 +47,5 @@
     <loc>https://system-777.github.io/popgen-blog/categories/</loc>
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/contact/</loc>
-  </url><url>
-    <loc>https://system-777.github.io/popgen-blog/tags/</loc>
   </url>
 </urlset>

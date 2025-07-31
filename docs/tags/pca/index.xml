@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>PCA on system.popgen</title>
+    <link>https://system-777.github.io/popgen-blog/tags/pca/</link>
+    <description>Recent content in PCA on system.popgen</description>
+    <generator>Hugo -- 0.148.2</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 30 Jul 2025 20:47:41 +0200</lastBuildDate>
+    <atom:link href="https://system-777.github.io/popgen-blog/tags/pca/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Performing PCA on Genetic Data Using Smartpca</title>
+      <link>https://system-777.github.io/popgen-blog/posts/4-smartpca/</link>
+      <pubDate>Wed, 30 Jul 2025 20:47:41 +0200</pubDate>
+      <guid>https://system-777.github.io/popgen-blog/posts/4-smartpca/</guid>
+      <description>&lt;p&gt;This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, &lt;strong&gt;smartpca&lt;/strong&gt; (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.&lt;/p&gt;
+&lt;p&gt;Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: &lt;a href=&#34;https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/&#34;&gt;From EIGENSTRAT to PACKEDPED&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform &lt;strong&gt;Linkage Disequilibrium (LD) pruning&lt;/strong&gt;, which helps reduce SNP redundancy and improves the detection of population structure in PCA.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Performing PCA on Genetic Data Using PLINK</title>
+      <link>https://system-777.github.io/popgen-blog/posts/3-pca-analysis/</link>
+      <pubDate>Tue, 29 Jul 2025 16:00:00 +0000</pubDate>
+      <guid>https://system-777.github.io/popgen-blog/posts/3-pca-analysis/</guid>
+      <description>&lt;p&gt;In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset.
+Before we begin, we need to prepare a subset of samples we&amp;rsquo;re interested in analyzing.&lt;/p&gt;
+&lt;p&gt;To do this, we’ll extract sample information from the &lt;code&gt;.fam&lt;/code&gt; file.
+But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.&lt;/p&gt;
+&lt;p&gt;The easiest way is to open the corresponding &lt;code&gt;.ind&lt;/code&gt; file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad++, and search for the population name, in this case, Sardinian.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

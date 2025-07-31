@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
 <title>Performing PCA on Genetic Data Using Smartpca | system.popgen</title>
-<meta name="keywords" content="">
+<meta name="keywords" content="PLINK, PCA, smartpca, convertf">
 <meta name="description" content="This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, smartpca (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
 Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.
 As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.">
@@ -183,6 +183,10 @@ As before, I’ll use a small subset. The focus here is on the technical process
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2025-07-30T20:47:41+02:00">
     <meta property="article:modified_time" content="2025-07-30T20:47:41+02:00">
+    <meta property="article:tag" content="PLINK">
+    <meta property="article:tag" content="PCA">
+    <meta property="article:tag" content="Smartpca">
+    <meta property="article:tag" content="Convertf">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Performing PCA on Genetic Data Using Smartpca">
 <meta name="twitter:description" content="This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, smartpca (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
@@ -218,7 +222,7 @@ As before, I’ll use a small subset. The focus here is on the technical process
   "name": "Performing PCA on Genetic Data Using Smartpca",
   "description": "This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, smartpca (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.\nSmartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.\nAs before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.\n",
   "keywords": [
-    
+    "PLINK", "PCA", "smartpca", "convertf"
   ],
   "articleBody": "This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, smartpca (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.\nSmartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.\nAs before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.\nLD Pruning # Window size: 50 SNPs # Step size: 5 SNPs # LD threshold: r² \u003e 0.2 will be pruned plink --bfile input --indep-pairwise 50 5 0.2 # Extract the pruned SNPs into a new dataset plink --bfile input --extract plink.prune.in --make-bed --out pruned_data Note: If you’re working with low-coverage ancient samples, applying LD pruning directly to a mixed dataset (modern + ancient) may introduce bias, since SNP retention will favor samples with higher coverage. A better approach:\nPrune only the modern dataset. Use the same pruned SNP list (plink.prune.in) to extract SNPs from the ancient dataset. Merge both datasets. Here’s how you can do that:\n# Step 1: Prune modern samples plink --bfile modern --indep-pairwise 50 5 0.2 # Step 2: Create pruned datasets for both groups plink --bfile modern --extract plink.prune.in --make-bed --out pruned_modern plink --bfile ancient --extract plink.prune.in --make-bed --out ancient_extracted # Step 3: Merge datasets plink --bfile pruned_modern --bmerge ancient_extracted --make-bed --out final Creating the Parameter File Like most Reich Lab tools, smartpca uses a parameter file to specify input and output options. Here’s a minimal example:\ngenotypename: pca.geno snpname: pca.snp indivname: pca.ind evecoutname: pca.evec evaloutname: pca.eval altnormstyle: NO numoutevec: 10 numoutliter: 0 lsqproject: YES numthreads: 5 lsqproject: YES enables projection mode, meaning projected samples don’t influence the PCA axes. In this example, all samples are high-coverage modern individuals, so projection isn’t technically needed—but I demonstrate it here for completeness. Save the parameter file with a name like pca_param (no extension).\nTo project samples, you’ll need to modify the .ind file of your EIGENSTRAT dataset. Change the third column from Case to P:\n... 2032:TLA018.HO M Case 2033:TLA019.HO M P 2034:TLA020.HO M Case ... Running smartpca Now we run smartpca with:\nsmartpca -p pca_param This generates two files: pca.eigenval (lists how much variance each eigenvector explains) and pca.evec (contains sample IDs and principal component values).\nPreparing for Plotting To make the output compatible with the plotting script from the previous post, convert the .evec file to CSV:\nawk '{ $NF=\"\"; sub(/[ \\t]+$/, \"\"); gsub(/[ \\t]+/, \",\"); print }' pca.evec \u003e smartpca.csv Then, open the resulting file and manually delete the first line (which begins with #eigvals).\nFinal Plot After loading the cleaned CSV into the plotting script, this is the resulting plot for my subset: ",
   "wordCount" : "497",
@@ -374,6 +378,10 @@ As before, I’ll use a small subset. The focus here is on the technical process
 
   <footer class="post-footer">
     <ul class="post-tags">
+      <li><a href="https://system-777.github.io/popgen-blog/tags/plink/">PLINK</a></li>
+      <li><a href="https://system-777.github.io/popgen-blog/tags/pca/">PCA</a></li>
+      <li><a href="https://system-777.github.io/popgen-blog/tags/smartpca/">Smartpca</a></li>
+      <li><a href="https://system-777.github.io/popgen-blog/tags/convertf/">Convertf</a></li>
     </ul>
 <nav class="paginav">
   <a class="next" href="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/">
