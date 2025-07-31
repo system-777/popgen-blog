@@ -84,7 +84,7 @@ snpoutname:      data.bim
 indivoutname:    data.fam
 ```
 
-Save the file with any name you like, I named mine simply parameter (no file extension). This file tells convertf what to do. Start the conversion with:
+Save the file with any name you like, I named mine simply `parameter` (no file extension). This file tells convertf what to do. Start the conversion with:
 ``` bash
 convertf -p parameter
 ```
