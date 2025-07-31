@@ -2,6 +2,7 @@
 date = '2025-07-30T20:47:41+02:00'
 draft = false
 title = 'Performing PCA on Genetic Data Using Smartpca'
+tags = ["PLINK", "PCA", "smartpca", "convertf"]
 +++
 
 This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, **smartpca** (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
