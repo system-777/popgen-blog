@@ -358,7 +358,7 @@ If you&rsquo;re on Linux or WSL, you can make the binary globally accessible lik
 </span></span><span style="display:flex;"><span>genotypeoutname: data.bed 
 </span></span><span style="display:flex;"><span>snpoutname:      data.bim 
 </span></span><span style="display:flex;"><span>indivoutname:    data.fam
-</span></span></code></pre></div><p>Save the file with any name you like, I named mine simply parameter (no file extension). This file tells convertf what to do. Start the conversion with:</p>
+</span></span></code></pre></div><p>Save the file with any name you like, I named mine simply <code>parameter</code> (no file extension). This file tells convertf what to do. Start the conversion with:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>convertf -p parameter
 </span></span></code></pre></div><p>The process may take a while, as the dataset is large.</p>
 <p>Once complete, you’ll have a set of PLINK-compatible binary files: <code>data.bed</code>, <code>data.bim</code>, and <code>data.fam</code>, ready for downstream processing.</p>
