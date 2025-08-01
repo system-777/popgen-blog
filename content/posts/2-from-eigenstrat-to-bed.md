@@ -2,7 +2,7 @@
 date = '2025-07-29T15:30:00'
 draft = false
 title = 'From EIGENSTRAT to PACKEDPED'
-tags = ["EIGENSTRAT", "PACKEDPED", "PLINK", "convertf"]
+tags = ["EIGENSTRAT", "PACKEDPED", "PLINK", "convertf", "Data Preparation"]
 +++
 
 The files downloaded in the previous blog post are in **EIGENSTRAT** format. In this post, we’ll look at how to convert them to **PACKEDPED** format.

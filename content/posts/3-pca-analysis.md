@@ -2,7 +2,7 @@
 date = '2025-07-29T16:00:00'
 draft = false
 title = 'Performing PCA on Genetic Data Using PLINK'
-tags = ["PLINK", "PCA"]
+tags = ["PLINK", "PCA", "Data Preparation"]
 +++
 
 In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset.
