@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Estimating Ancestry Components Using ADMIXTURE | system.popgen</title>
+<meta name="keywords" content="">
+<meta name="description" content="In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: ADMIXTURE. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.
+
+Preparing the Dataset
+Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you&rsquo;re unsure how to prune your dataset, refer to the previous post.">
+<meta name="author" content="">
+<link rel="canonical" href="https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/">
+<link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://system-777.github.io/popgen-blog/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://system-777.github.io/popgen-blog/apple-touch-icon.png">
+<link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+ 
+.post-entry, .first-entry {
+    background: var(--entry);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+.post-entry:hover, .first-entry:hover {
+     
+}
+
+ 
+.entry-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.entry-header h2 a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.entry-header h2 a:hover {
+    color: #1e3a8a;  
+}
+
+ 
+.entry-content {
+    color: var(--content);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+ 
+.entry-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+ 
+.main {
+    padding-top: 2rem;
+}
+
+ 
+.post-entry, .first-entry {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-entry:nth-child(1) { animation-delay: 0.1s; }
+.post-entry:nth-child(2) { animation-delay: 0.2s; }
+.post-entry:nth-child(3) { animation-delay: 0.3s; }
+.post-entry:nth-child(4) { animation-delay: 0.4s; }
+
+.dark .post-entry, .dark .first-entry {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .post-entry:hover, .dark .first-entry:hover {
+     
+}
+
+ 
+@media (max-width: 768px) {
+    .post-entry, .first-entry {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .entry-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/">
+  <meta property="og:site_name" content="system.popgen">
+  <meta property="og:title" content="Estimating Ancestry Components Using ADMIXTURE">
+  <meta property="og:description" content="In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: ADMIXTURE. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.
+Preparing the Dataset Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you’re unsure how to prune your dataset, refer to the previous post.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-08-02T22:47:12+02:00">
+    <meta property="article:modified_time" content="2025-08-02T22:47:12+02:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Estimating Ancestry Components Using ADMIXTURE">
+<meta name="twitter:description" content="In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: ADMIXTURE. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.
+
+Preparing the Dataset
+Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you&rsquo;re unsure how to prune your dataset, refer to the previous post.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://system-777.github.io/popgen-blog/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Estimating Ancestry Components Using ADMIXTURE",
+      "item": "https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Estimating Ancestry Components Using ADMIXTURE",
+  "name": "Estimating Ancestry Components Using ADMIXTURE",
+  "description": "In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: ADMIXTURE. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.\nPreparing the Dataset Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you\u0026rsquo;re unsure how to prune your dataset, refer to the previous post.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: ADMIXTURE. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.\nPreparing the Dataset Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you’re unsure how to prune your dataset, refer to the previous post.\nEven after pruning, my dataset still contained over 140,000 SNPs. Since ADMIXTURE can be memory-intensive, especially given that multiple runs are often needed for interpretation, it’s a good idea to reduce the dataset further using PLINK’s --thin-count flag. This randomly subsamples SNPs and significantly speeds up ADMIXTURE runs.\nExample: thinning to 50k SNPs:\nplink --bfile admix.data.pruned --thin-count 50000 --make-bed --out admix.final This will produce a PACKEDPED-format dataset (.bed/.bim/.fam) with 50,000 randomly selected SNPs.\nRunning ADMIXTURE ADMIXTURE supports both unsupervised and supervised modes. In this post, I’ll focus on unsupervised runs. Given a user-defined number of ancestral populations (K), ADMIXTURE attempts to assign ancestry proportions by maximizing within-cluster FST.\nBasic run (for K = 6):\n#ADMIXTURE expects a .bed file as input. #Replace admixture32 with the binary appropriate for your system. On my x64 Linux system, only the x32 binary worked correctly ./admixture32 admix.final.bed 6 Choosing the right K is nontrivial. While ADMIXTURE supports cross-validation (--cv), in practice, evaluating the biological plausibility of inferred components tends to be more informative. Overfitting (too many Ks) often results in arbitrary splits of populations. For example, in my test dataset, K=7 caused the Mongol samples to split into two distinct components, probably reflecting internal structure, but for most purposes this was excessive, since there’s no clear indication of what that split represents for this dataset.\nFor my K=6 run, I expected the following components:\nIrano-Caucasian Divergent Zoroastrian North African (peaking in Mozabites) Sub-Saharan African (peaking in Malawi) East Asian (peaking in Mongols) South Arabian (peaking in Yemeni Highlanders) Keep in mind: a higher K does not guarantee the appearance of desired or known populations. Component formation depends on statistical divergence, not geography or labels.\nOutput Files ADMIXTURE generates:\n.Q – ancestry proportions per individual (aligned with rows in the .fam file) .P – allele frequencies per component and SNP (aligned with the .bim file) ADMIXTURE does not name the components. You’ll need to interpret them based on which populations they peak in. For example, if the first 10 individuals are Mozabites and they all share a high value (e.g., \u003e0.95) for a single component, that component likely reflects North African ancestry.\nPlotting a Bar Plot To interpret ADMIXTURE’s output visually, we’ll plot the .Q file, which contains ancestry proportions for each individual in the dataset. Each row corresponds to a sample in the .fam file, and each column to one of the inferred components (K).\nTo make the plot more readable, we’ll group samples by population using a labels file - one line per sample, aligned with the .fam file.\nIf you don’t already have a labels file, see Performing PCA on Genetic Data Using PLINK for a quick method. In short:\n# Adjust the .ind to your prefix awk 'NR==FNR {map[$1]=$3; next} {print map[$2]}' v62.0_HO_public.ind admix.final.fam \u003e labels This command matches each individual in the .fam file to their population label from the .ind file (column 3), creating a label file that aligns row-wise with the ADMIXTURE output.\nOnce you have the .Q file and the labels file, you can use the Python script below to plot the ADMIXTURE proportions as a bar plot grouped by population:\nimport numpy as np import pandas as pd import matplotlib.pyplot as plt from collections import defaultdict # --- Configuration --- q_file = \"admix.final.6.Q\" # Path to your .Q file labels_file = \"labels\" # Path to your labels file figsize = (20, 6) label_fontsize = 10 min_group_size = 3 # Only show label if group size ≥ this bar_width = 1.0 # --- Load data --- Q = pd.read_csv(q_file, sep=r\"\\s+\", header=None) labels = pd.read_csv(labels_file, header=None)[0] assert len(Q) == len(labels), \"Mismatch between Q rows and labels\" # --- Sort by labels to merge same-pop groups --- sorted_idx = labels.argsort() Q_sorted = Q.iloc[sorted_idx].reset_index(drop=True) labels_sorted = labels.iloc[sorted_idx].reset_index(drop=True) # --- Compute new plotting indices --- N, K = Q_sorted.shape[0], Q_sorted.shape[1] x = np.arange(N) # --- Set colors --- cmap = plt.get_cmap('tab10') colors = [cmap(i % 10) for i in range(K)] # --- Plot bars --- fig, ax = plt.subplots(figsize=figsize) bottom = np.zeros(N) for k in range(K): ax.bar(x, Q_sorted[k], bottom=bottom, color=colors[k], width=bar_width, linewidth=0) bottom += Q_sorted[k] # --- Group and label if ≥ min_group_size --- group_positions = defaultdict(list) for idx, label in enumerate(labels_sorted): group_positions[label].append(idx) for label, indices in group_positions.items(): if len(indices) \u003e= min_group_size: mid = (indices[0] + indices[-1]) / 2 ax.plot([mid, mid], [-0.03, 0], color='black', lw=0.8) ax.text(mid, -0.04, label, ha='right', va='top', fontsize=label_fontsize, rotation=45, rotation_mode='anchor') # --- Final styling tweaks --- ax.set_xlim(-0.5, N - 0.5) ax.set_ylim(-0.08, 1.05) ax.set_ylabel(\"Ancestry\", fontsize=12) ax.set_xticks([]) ax.set_yticks(np.linspace(0, 1, 6)) ax.tick_params(axis='both', length=0) ax.spines['top'].set_visible(False) ax.spines['right'].set_visible(False) ax.spines['bottom'].set_position('zero') plt.subplots_adjust(left=0.06, bottom=0.18) plt.show() Here’s the bar plot generated for my West Asian subset at K=6: ",
+  "wordCount" : "865",
+  "inLanguage": "en",
+  "datePublished": "2025-08-02T22:47:12+02:00",
+  "dateModified": "2025-08-02T22:47:12+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "system.popgen",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://system-777.github.io/popgen-blog/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://system-777.github.io/popgen-blog/" accesskey="h" title="system.popgen (Alt + H)">system.popgen</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/contact/" title="Contact">
+                    <span>Contact</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Estimating Ancestry Components Using ADMIXTURE
+    </h1>
+    <div class="post-meta"><span title='2025-08-02 22:47:12 +0200 CEST'>August 2, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: <a href="https://dalexander.github.io/admixture/download.html">ADMIXTURE</a>. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.</p>
+<hr>
+<h3 id="preparing-the-dataset">Preparing the Dataset<a hidden class="anchor" aria-hidden="true" href="#preparing-the-dataset">#</a></h3>
+<p>Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you&rsquo;re unsure how to prune your dataset, refer to the previous post.</p>
+<p>Even after pruning, my dataset still contained over 140,000 SNPs. Since ADMIXTURE can be memory-intensive, especially given that multiple runs are often needed for interpretation, it&rsquo;s a good idea to reduce the dataset further using PLINK’s <code>--thin-count</code> flag. This randomly subsamples SNPs and significantly speeds up ADMIXTURE runs.</p>
+<p>Example: thinning to 50k SNPs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>plink --bfile admix.data.pruned --thin-count <span style="color:#ae81ff">50000</span> --make-bed --out admix.final
+</span></span></code></pre></div><p>This will produce a PACKEDPED-format dataset (<code>.bed/.bim/.fam</code>) with 50,000 randomly selected SNPs.</p>
+<hr>
+<h3 id="running-admixture">Running ADMIXTURE<a hidden class="anchor" aria-hidden="true" href="#running-admixture">#</a></h3>
+<p>ADMIXTURE supports both <strong>unsupervised</strong> and <strong>supervised</strong> modes. In this post, I’ll focus on unsupervised runs. Given a user-defined number of ancestral populations (K), ADMIXTURE attempts to assign ancestry proportions by maximizing within-cluster FST.</p>
+<p>Basic run (for K = 6):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#ADMIXTURE expects a .bed file as input.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#Replace admixture32 with the binary appropriate for your system. On my x64 Linux system, only the x32 binary worked correctly</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>./admixture32 admix.final.bed <span style="color:#ae81ff">6</span>
+</span></span></code></pre></div><p>Choosing the right K is nontrivial. While ADMIXTURE supports cross-validation (<code>--cv</code>), in practice, evaluating the biological plausibility of inferred components tends to be more informative. Overfitting (too many Ks) often results in arbitrary splits of populations. For example, in my test dataset, K=7 caused the Mongol samples to split into two distinct components, probably reflecting internal structure, but for most purposes this was excessive, since there’s no clear indication of what that split represents for this dataset.</p>
+<p>For my K=6 run, I expected the following components:</p>
+<ul>
+<li>Irano-Caucasian</li>
+<li>Divergent Zoroastrian</li>
+<li>North African (peaking in Mozabites)</li>
+<li>Sub-Saharan African (peaking in Malawi)</li>
+<li>East Asian (peaking in Mongols)</li>
+<li>South Arabian (peaking in Yemeni Highlanders)</li>
+</ul>
+<p>Keep in mind: a higher K does not guarantee the appearance of desired or known populations. Component formation depends on statistical divergence, not geography or labels.</p>
+<hr>
+<h3 id="output-files">Output Files<a hidden class="anchor" aria-hidden="true" href="#output-files">#</a></h3>
+<p>ADMIXTURE generates:</p>
+<ul>
+<li><code>.Q</code> – ancestry proportions per individual (aligned with rows in the <code>.fam</code> file)</li>
+<li><code>.P</code> – allele frequencies per component and SNP (aligned with the <code>.bim</code> file)</li>
+</ul>
+<p>ADMIXTURE does not name the components. You&rsquo;ll need to interpret them based on which populations they peak in. For example, if the first 10 individuals are Mozabites and they all share a high value (e.g., &gt;0.95) for a single component, that component likely reflects North African ancestry.</p>
+<hr>
+<h3 id="plotting-a-bar-plot">Plotting a Bar Plot<a hidden class="anchor" aria-hidden="true" href="#plotting-a-bar-plot">#</a></h3>
+<p>To interpret ADMIXTURE’s output visually, we’ll plot the <code>.Q</code> file, which contains ancestry proportions for each individual in the dataset. Each row corresponds to a sample in the <code>.fam</code> file, and each column to one of the inferred components (K).</p>
+<p>To make the plot more readable, we’ll group samples by population using a <code>labels</code> file - one line per sample, aligned with the <code>.fam</code> file.</p>
+<p>If you don’t already have a <code>labels</code> file, see <a href="/popgen-blog/posts/3-pca-analysis/">Performing PCA on Genetic Data Using PLINK</a> for a quick method. In short:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Adjust the .ind to your prefix</span>
+</span></span><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;NR==FNR {map[$1]=$3; next} {print map[$2]}&#39;</span> v62.0_HO_public.ind admix.final.fam &gt; labels
+</span></span></code></pre></div><p>This command matches each individual in the <code>.fam</code> file to their population label from the <code>.ind</code> file (column 3), creating a label file that aligns row-wise with the ADMIXTURE output.</p>
+<p>Once you have the <code>.Q</code> file and the <code>labels</code> file, you can use the Python script below to plot the ADMIXTURE proportions as a bar plot grouped by population:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> collections <span style="color:#f92672">import</span> defaultdict
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Configuration ---</span>
+</span></span><span style="display:flex;"><span>q_file <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;admix.final.6.Q&#34;</span>        <span style="color:#75715e"># Path to your .Q file</span>
+</span></span><span style="display:flex;"><span>labels_file <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;labels&#34;</span>        <span style="color:#75715e"># Path to your labels file</span>
+</span></span><span style="display:flex;"><span>figsize <span style="color:#f92672">=</span> (<span style="color:#ae81ff">20</span>, <span style="color:#ae81ff">6</span>)
+</span></span><span style="display:flex;"><span>label_fontsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>min_group_size <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>            <span style="color:#75715e"># Only show label if group size ≥ this</span>
+</span></span><span style="display:flex;"><span>bar_width <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Load data ---</span>
+</span></span><span style="display:flex;"><span>Q <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(q_file, sep<span style="color:#f92672">=</span><span style="color:#e6db74">r</span><span style="color:#e6db74">&#34;\s+&#34;</span>, header<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)
+</span></span><span style="display:flex;"><span>labels <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(labels_file, header<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">assert</span> len(Q) <span style="color:#f92672">==</span> len(labels), <span style="color:#e6db74">&#34;Mismatch between Q rows and labels&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Sort by labels to merge same-pop groups ---</span>
+</span></span><span style="display:flex;"><span>sorted_idx <span style="color:#f92672">=</span> labels<span style="color:#f92672">.</span>argsort()
+</span></span><span style="display:flex;"><span>Q_sorted <span style="color:#f92672">=</span> Q<span style="color:#f92672">.</span>iloc[sorted_idx]<span style="color:#f92672">.</span>reset_index(drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>labels_sorted <span style="color:#f92672">=</span> labels<span style="color:#f92672">.</span>iloc[sorted_idx]<span style="color:#f92672">.</span>reset_index(drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Compute new plotting indices ---</span>
+</span></span><span style="display:flex;"><span>N, K <span style="color:#f92672">=</span> Q_sorted<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>], Q_sorted<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>arange(N)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Set colors ---</span>
+</span></span><span style="display:flex;"><span>cmap <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>get_cmap(<span style="color:#e6db74">&#39;tab10&#39;</span>)
+</span></span><span style="display:flex;"><span>colors <span style="color:#f92672">=</span> [cmap(i <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>) <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(K)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Plot bars ---</span>
+</span></span><span style="display:flex;"><span>fig, ax <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(figsize<span style="color:#f92672">=</span>figsize)
+</span></span><span style="display:flex;"><span>bottom <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros(N)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> k <span style="color:#f92672">in</span> range(K):
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>bar(x, Q_sorted[k], bottom<span style="color:#f92672">=</span>bottom, color<span style="color:#f92672">=</span>colors[k], width<span style="color:#f92672">=</span>bar_width, linewidth<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    bottom <span style="color:#f92672">+=</span> Q_sorted[k]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Group and label if ≥ min_group_size ---</span>
+</span></span><span style="display:flex;"><span>group_positions <span style="color:#f92672">=</span> defaultdict(list)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> idx, label <span style="color:#f92672">in</span> enumerate(labels_sorted):
+</span></span><span style="display:flex;"><span>    group_positions[label]<span style="color:#f92672">.</span>append(idx)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> label, indices <span style="color:#f92672">in</span> group_positions<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> len(indices) <span style="color:#f92672">&gt;=</span> min_group_size:
+</span></span><span style="display:flex;"><span>        mid <span style="color:#f92672">=</span> (indices[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> indices[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        ax<span style="color:#f92672">.</span>plot([mid, mid], [<span style="color:#f92672">-</span><span style="color:#ae81ff">0.03</span>, <span style="color:#ae81ff">0</span>], color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;black&#39;</span>, lw<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>)
+</span></span><span style="display:flex;"><span>        ax<span style="color:#f92672">.</span>text(mid, <span style="color:#f92672">-</span><span style="color:#ae81ff">0.04</span>, label, ha<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;right&#39;</span>, va<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;top&#39;</span>,
+</span></span><span style="display:flex;"><span>                fontsize<span style="color:#f92672">=</span>label_fontsize, rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>, rotation_mode<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;anchor&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Final styling tweaks ---</span>
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_xlim(<span style="color:#f92672">-</span><span style="color:#ae81ff">0.5</span>, N <span style="color:#f92672">-</span> <span style="color:#ae81ff">0.5</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_ylim(<span style="color:#f92672">-</span><span style="color:#ae81ff">0.08</span>, <span style="color:#ae81ff">1.05</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;Ancestry&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">12</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_xticks([])
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_yticks(np<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>tick_params(axis<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;both&#39;</span>, length<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)  
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>spines[<span style="color:#e6db74">&#39;top&#39;</span>]<span style="color:#f92672">.</span>set_visible(<span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>spines[<span style="color:#e6db74">&#39;right&#39;</span>]<span style="color:#f92672">.</span>set_visible(<span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>spines[<span style="color:#e6db74">&#39;bottom&#39;</span>]<span style="color:#f92672">.</span>set_position(<span style="color:#e6db74">&#39;zero&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>subplots_adjust(left<span style="color:#f92672">=</span><span style="color:#ae81ff">0.06</span>, bottom<span style="color:#f92672">=</span><span style="color:#ae81ff">0.18</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p>Here’s the bar plot generated for my West Asian subset at K=6:
+<img alt="ADMIXTURE Bar Plot" loading="lazy" src="/popgen-blog/images/Figure_3.png"></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://system-777.github.io/popgen-blog/posts/4-smartpca/">
+    <span class="title">Prev »</span>
+    <br>
+    <span>Performing PCA on Genetic Data Using Smartpca</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://system-777.github.io/popgen-blog/">system.popgen</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
