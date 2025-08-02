@@ -60,7 +60,7 @@ snpoutname:      pca.snp
 indivoutname:    pca.ind
 ````
 
-Now run
+Now run:
 
 ```bash
 convertf -p convert 
