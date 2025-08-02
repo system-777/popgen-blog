@@ -35,6 +35,7 @@ But first, we need to identify the samples of interest. For example, those from 
       <guid>https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/</guid>
       <description>&lt;p&gt;The files downloaded in the previous blog post are in &lt;strong&gt;EIGENSTRAT&lt;/strong&gt; format. In this post, we’ll look at how to convert them to &lt;strong&gt;PACKEDPED&lt;/strong&gt; format.&lt;/p&gt;
 &lt;p&gt;PACKEDPED format allows for easier downstream processing using the &lt;strong&gt;PLINK&lt;/strong&gt; toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.&lt;/p&gt;
+&lt;hr&gt;
 &lt;h3 id=&#34;downloading-plink&#34;&gt;Downloading PLINK&lt;/h3&gt;
 &lt;p&gt;I use &lt;a href=&#34;https://www.cog-genomics.org/plink/&#34;&gt;PLINK 1.9&lt;/a&gt;. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.&lt;/p&gt;</description>
     </item>

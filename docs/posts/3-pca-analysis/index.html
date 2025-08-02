@@ -337,6 +337,7 @@ Now take note of these IIDs, for example: HGDP01075.HO.</p>
 <p>After selecting a subset of samples of interest — for example, several European populations — and saving them to a file (in this case named <code>samples</code>, without a file extension), we can use PLINK to generate a new dataset:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>plink --bfile data --keep samples --make-bed --out subset
 </span></span></code></pre></div><p>This will create a new binary PLINK dataset (subset.bed, .bim, .fam) containing only the selected individuals.</p>
+<hr>
 <h3 id="running-pca">Running PCA<a hidden class="anchor" aria-hidden="true" href="#running-pca">#</a></h3>
 <p>Now we can run the PCA on the subset:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># --out specifies the output file prefix</span>
@@ -349,6 +350,7 @@ Now take note of these IIDs, for example: HGDP01075.HO.</p>
 </span></span></code></pre></div><p>This will generate a CSV-output file where each line contains a sample ID followed by its principal component values.</p>
 <p>The resulting file can be loaded into Python or R for downstream analysis. It’s also compatible with hobbyist tools like Vahaduo — though I personally don’t endorse such platforms, nor do I consider their models accurate or reliable.</p>
 <p>In fact, you may observe with your own dataset that distances can vary significantly depending on how many and which samples are included. For example, if your PCA is based only on a regional subset, much more variance will remain <strong>within</strong> that region. As a result, samples may appear more distant from each other compared to what you’d see in global reference PCA datasets like G25.</p>
+<hr>
 <h3 id="plotting-the-pca">Plotting the PCA<a hidden class="anchor" aria-hidden="true" href="#plotting-the-pca">#</a></h3>
 <p>The previously created CSV-file can be used to make a PCA-plot. However, since the file contains only sample IDs and principal component values — without population labels — we’ll first generate a separate label file to make the plot easier to interpret. To do this, we’ll match each sample in the <code>.fam</code> file to its corresponding population label from the original <code>.ind</code> file. The <code>.ind</code> file contains the population in the third column. We’ll extract that and output it in the same order as the .fam file, so the labels line up with the PCA values.</p>
 <p>Here’s a one-liner using <code>awk</code>:</p>
