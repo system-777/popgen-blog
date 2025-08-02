@@ -9,6 +9,8 @@ The files downloaded in the previous blog post are in **EIGENSTRAT** format. In 
 
 PACKEDPED format allows for easier downstream processing using the **PLINK** toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.
 
+---
+
 ### Downloading PLINK
 
 I use [PLINK 1.9](https://www.cog-genomics.org/plink/). While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.
@@ -24,6 +26,8 @@ sudo cp plink /usr/local/bin/
 # Test if PLINK works
 plink
 ```
+
+---
 
 ### Compiling EIGENSOFT
 Before we can use PLINK on the downloaded dataset, we have to convert it to PACKEDPED format. We will use the convertf tool from the EIGENSOFT toolset. 
@@ -72,6 +76,8 @@ Make it globally accessible:
 sudo cp smartpca /usr/local/bin/
 ```
 I will provide examples on using smartpca for principal component analysis (PCA) in another post. Since it was compiled alongside the other EIGENSOFT tools, I’m just mentioning it here for completeness.
+
+---
 
 ### Converting from EIGENSTRAT to PACKEDPED
 Now we can convert the EIGENSTRAT dataset to PACKEDPED. Navigate into the folder or directory you store the dataset. Then with a text editor of your choice generate a file with the following content (adjust the input prefixes to those of your dataset):

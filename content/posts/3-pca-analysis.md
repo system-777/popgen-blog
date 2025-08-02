@@ -42,6 +42,8 @@ plink --bfile data --keep samples --make-bed --out subset
 ```
 This will create a new binary PLINK dataset (subset.bed, .bim, .fam) containing only the selected individuals.
 
+---
+
 ### Running PCA
 Now we can run the PCA on the subset:
 ```bash
@@ -61,6 +63,8 @@ This will generate a CSV-output file where each line contains a sample ID follow
 The resulting file can be loaded into Python or R for downstream analysis. It’s also compatible with hobbyist tools like Vahaduo — though I personally don’t endorse such platforms, nor do I consider their models accurate or reliable.
 
 In fact, you may observe with your own dataset that distances can vary significantly depending on how many and which samples are included. For example, if your PCA is based only on a regional subset, much more variance will remain **within** that region. As a result, samples may appear more distant from each other compared to what you’d see in global reference PCA datasets like G25. 
+
+---
 
 ### Plotting the PCA
 The previously created CSV-file can be used to make a PCA-plot. However, since the file contains only sample IDs and principal component values — without population labels — we’ll first generate a separate label file to make the plot easier to interpret. To do this, we’ll match each sample in the `.fam` file to its corresponding population label from the original `.ind` file. The `.ind` file contains the population in the third column. We’ll extract that and output it in the same order as the .fam file, so the labels line up with the PCA values.

@@ -9,6 +9,8 @@ A Linux environment is unavoidable when it comes to bioinformatical data process
 
 For Windows users, the **Windows Subsystem for Linux (WSL)** provides a good alternative to dual booting or setting up a full virtual machine.
 
+---
+
 ### Installing WSL with Debian
 
 Open **PowerShell as Administrator** and run:
@@ -21,6 +23,8 @@ Once installed, update the system:
 ``` bash
 sudo apt update && sudo apt upgrade -y
 ```
+
+---
 
 ### Downloading A Genetic Dataset
 Next, you need to obtain a genetic dataset. A good and comprehensive resource is the [Allen Ancient DNA Resource (AADR)](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/FFIDCW). 
