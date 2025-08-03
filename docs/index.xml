@@ -16,7 +16,7 @@
       <description>&lt;p&gt;In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: &lt;a href=&#34;https://dalexander.github.io/admixture/download.html&#34;&gt;ADMIXTURE&lt;/a&gt;. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;preparing-the-dataset&#34;&gt;Preparing the Dataset&lt;/h3&gt;
-&lt;p&gt;Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you&amp;rsquo;re unsure how to prune your dataset, refer to the previous post.&lt;/p&gt;</description>
+&lt;p&gt;Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations (around 150 samples in total). Linkage Disequilibrium (LD) pruning was applied beforehand. If you&amp;rsquo;re unsure how to prune your dataset, refer to the previous post.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Performing PCA on Genetic Data Using Smartpca</title>
