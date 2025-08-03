@@ -1,6 +1,6 @@
 +++
 date = '2025-08-02T22:47:12+02:00'
-draft = true
+draft = false
 title = 'Estimating Ancestry Components Using ADMIXTURE'
 +++
 In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: [ADMIXTURE](https://dalexander.github.io/admixture/download.html). ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.
@@ -8,7 +8,7 @@ In this post, I’ll demonstrate how to estimate ancestry proportions using one 
 ---
 
 ### Preparing the Dataset
-Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations. Linkage Disequilibrium (LD) pruning was applied beforehand. If you're unsure how to prune your dataset, refer to the previous post.
+Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations (around 150 samples in total). Linkage Disequilibrium (LD) pruning was applied beforehand. If you're unsure how to prune your dataset, refer to the previous post.
 
 Even after pruning, my dataset still contained over 140,000 SNPs. Since ADMIXTURE can be memory-intensive, especially given that multiple runs are often needed for interpretation, it's a good idea to reduce the dataset further using PLINK’s `--thin-count` flag. This randomly subsamples SNPs and significantly speeds up ADMIXTURE runs.
 
@@ -26,23 +26,24 @@ ADMIXTURE supports both **unsupervised** and **supervised** modes. In this post,
 
 Basic run (for K = 6):
 ```bash
-#ADMIXTURE expects a .bed file as input.
-#Replace admixture32 with the binary appropriate for your system. On my x64 Linux system, only the x32 binary worked correctly
+# ADMIXTURE expects a .bed file as input
+# Replace admixture32 with the binary appropriate for your system
+# On my x64 Linux system, only the x32 binary works correctly
 
 ./admixture32 admix.final.bed 6
 ```
 
-Choosing the right K is nontrivial. While ADMIXTURE supports cross-validation (`--cv`), in practice, evaluating the biological plausibility of inferred components tends to be more informative. Overfitting (too many Ks) often results in arbitrary splits of populations. For example, in my test dataset, K=7 caused the Mongol samples to split into two distinct components, probably reflecting internal structure, but for most purposes this was excessive, since there’s no clear indication of what that split represents for this dataset.
+There’s no definitive way to choose the right number of ancestral components (K); it usually involves a combination of testing and intuition. While ADMIXTURE supports cross-validation (`--cv`), in practice, evaluating the plausibility of inferred components tends to be more informative. Overfitting (too many Ks) often results in arbitrary splits of populations. For example, in my test dataset, K=7 caused the Mongol samples to split into two distinct components, probably reflecting internal structure, but for most purposes this was excessive, since there’s no clear indication of what that split represents for this dataset.
 
 For my K=6 run, I expected the following components:
-* Irano-Caucasian
-* Divergent Zoroastrian
-* North African (peaking in Mozabites)
-* Sub-Saharan African (peaking in Malawi)
-* East Asian (peaking in Mongols)
-* South Arabian (peaking in Yemeni Highlanders)
+* Northern West Asian component
+* Divergent Zoroastrian component
+* North African component (peaking in Mozabites)
+* Sub-Saharan African component (peaking in Malawi)
+* East Asian component (peaking in Mongols)
+* Southern West Asian component (peaking in Yemeni Highlanders)
 
-Keep in mind: a higher K does not guarantee the appearance of desired or known populations. Component formation depends on statistical divergence, not geography or labels.
+Keep in mind: a higher K does not guarantee the appearance of desired or known populations. Component formation depends on statistical divergence, not geography or labels. Also, each population should ideally include several individuals to allow ADMIXTURE to reliably form components based on shared structure.
 
 ---
 ### Output Files
@@ -50,7 +51,7 @@ ADMIXTURE generates:
 * `.Q` – ancestry proportions per individual (aligned with rows in the `.fam` file)
 * `.P` – allele frequencies per component and SNP (aligned with the `.bim` file)
 
-ADMIXTURE does not name the components. You'll need to interpret them based on which populations they peak in. For example, if the first 10 individuals are Mozabites and they all share a high value (e.g., >0.95) for a single component, that component likely reflects North African ancestry.
+ADMIXTURE does not name the components. You'll need to interpret them based on which populations they peak in. For example, if the first 10 individuals are Mozabites and they all share a high value (>0.95) for a single component, that component likely reflects North African ancestry.
 
 ---
 
@@ -60,7 +61,8 @@ To interpret ADMIXTURE’s output visually, we’ll plot the `.Q` file, which co
 
 To make the plot more readable, we’ll group samples by population using a `labels` file - one line per sample, aligned with the `.fam` file.
 
-If you don’t already have a `labels` file, see [Performing PCA on Genetic Data Using PLINK]({{< relref "posts/3-pca-analysis.md" >}}) for a quick method. In short:
+If you haven’t created a `labels` file for your current subset, see [Performing PCA on Genetic Data Using PLINK]({{< relref "posts/3-pca-analysis.md" >}}) for a quick method. In short:
+
 ```bash
 # Adjust the .ind to your prefix
 awk 'NR==FNR {map[$1]=$3; next} {print map[$2]}' v62.0_HO_public.ind admix.final.fam > labels
