@@ -16,8 +16,8 @@ Supervised runs are **much faster**, especially with large datasets, since ADMIX
 
 ### Creating a `.pop` File
 Supervised ADMIXTURE requires an additional file with the extension `.pop`. This file must:
-* Have the exact same prefix as your .bed input file.
-* Contain the same number of rows as your .fam file (one row per sample).
+* Have the exact same prefix as your `.bed` input file.
+* Contain the same number of rows as your `.fam` file (one row per sample).
 * Use labels (strings or integers) to assign each individual to a known ancestral population.
 * Use `-` (or leave the line empty) for individuals whose ancestry you want ADMIXTURE to infer.
 
@@ -31,7 +31,7 @@ Northern West Asia
 Northern West Asia
 ```
 
-In this example, the first three and the fifth samples are assigned to a component labeled Northern_West_Asia. The fourth sample (`-`) is unassigned and will be inferred based on the others.
+In this example, the first three and the fifth samples are assigned to a component labeled `Northern_West_Asia`. The fourth sample (`-`) is unassigned and will be inferred based on the others.
 You can define as many distinct labels as components you want ADMIXTURE to model (Ks). The number of unique labels in the `.pop` file determines K, the number of ancestral populations you’ll specify in the run.
 
 ---
@@ -48,8 +48,6 @@ ADMIXTURE will then use the population labels from your `.pop` file to build the
 ---
 
 ### When to Use Supervised Mode
-When to Use Supervised Mode
-
 Supervised ADMIXTURE is especially useful when:
 * You have high-confidence reference populations (ancient samples or unadmixed modern groups).
 * You want to test how certain samples relate to predefined clusters.
