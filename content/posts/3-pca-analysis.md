@@ -24,7 +24,7 @@ You should find entries like this:
 These entries tell us which **IIDs (individual IDs)** belong to Sardinian samples.
 Now take note of these IIDs, for example: HGDP01075.HO.
 
-Next, open your .fam file (from the previously created PACKEDPED dataset). You’ll see something like:
+Next, open your `.fam` file (from the previously created PACKEDPED dataset). You’ll see something like:
 ``` Text
         ...
   1664   HGDP01075.HO 0 0 1 2
@@ -32,7 +32,7 @@ Next, open your .fam file (from the previously created PACKEDPED dataset). You�
   1666   HGDP01077.HO 0 0 1 2
         ...
 ```
-Now match the IIDs from the `.ind` file to those in the .fam file. For each matching line in the .fam, copy the **entire line** into a new file. This new file will be used with PLINK's `--keep` flag to retain only the samples of interest.  
+Now match the IIDs from the `.ind` file to those in the `.fam` file. For each matching line in the `.fam`, copy the **entire line** into a new file. This new file will be used with PLINK's `--keep` flag to retain only the samples of interest.  
 
 **Note:** Since the `.ind` and `.fam` files are row-aligned, if you identify a block of consecutive samples in the `.ind` file belonging to the same population (e.g., 10 Sardinians in a row), you can safely copy the corresponding 10 lines from the `.fam` file without having to check each ID manually.
 
@@ -40,7 +40,7 @@ After selecting a subset of samples of interest — for example, several Europea
 ``` bash
 plink --bfile data --keep samples --make-bed --out subset
 ```
-This will create a new binary PLINK dataset (subset.bed, .bim, .fam) containing only the selected individuals.
+This will create a new binary PLINK dataset (`subset.bed`, `.bim`, `.fam`) containing only the selected individuals.
 
 ---
 
