@@ -6,8 +6,18 @@
     <description>Recent content in Posts on system.popgen</description>
     <generator>Hugo -- 0.148.2</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 02 Aug 2025 22:47:12 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 05 Aug 2025 13:21:16 +0200</lastBuildDate>
     <atom:link href="https://system-777.github.io/popgen-blog/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Running ADMIXTURE in Supervised Mode</title>
+      <link>https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/</link>
+      <pubDate>Tue, 05 Aug 2025 13:21:16 +0200</pubDate>
+      <guid>https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/</guid>
+      <description>&lt;p&gt;This post is a short follow-up to the previous one on &lt;a href=&#34;https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/&#34;&gt;Estimating Ancestry Components Using ADMIXTURE&lt;/a&gt;. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;what-is-a-supervised-run&#34;&gt;What Is a Supervised Run?&lt;/h3&gt;
+&lt;p&gt;In supervised mode, ADMIXTURE skips the component discovery step and instead uses &lt;strong&gt;user-defined groupings&lt;/strong&gt; to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Estimating Ancestry Components Using ADMIXTURE</title>
       <link>https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/</link>

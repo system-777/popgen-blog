@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Running ADMIXTURE in Supervised Mode | system.popgen</title>
+<meta name="keywords" content="">
+<meta name="description" content="This post is a short follow-up to the previous one on Estimating Ancestry Components Using ADMIXTURE. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.
+
+What Is a Supervised Run?
+In supervised mode, ADMIXTURE skips the component discovery step and instead uses user-defined groupings to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.">
+<meta name="author" content="">
+<link rel="canonical" href="https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/">
+<link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://system-777.github.io/popgen-blog/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://system-777.github.io/popgen-blog/apple-touch-icon.png">
+<link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+ 
+.post-entry, .first-entry {
+    background: var(--entry);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+.post-entry:hover, .first-entry:hover {
+     
+}
+
+ 
+.entry-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.entry-header h2 a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.entry-header h2 a:hover {
+    color: #1e3a8a;  
+}
+
+ 
+.entry-content {
+    color: var(--content);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+ 
+.entry-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+ 
+.main {
+    padding-top: 2rem;
+}
+
+ 
+.post-entry, .first-entry {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-entry:nth-child(1) { animation-delay: 0.1s; }
+.post-entry:nth-child(2) { animation-delay: 0.2s; }
+.post-entry:nth-child(3) { animation-delay: 0.3s; }
+.post-entry:nth-child(4) { animation-delay: 0.4s; }
+
+.dark .post-entry, .dark .first-entry {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .post-entry:hover, .dark .first-entry:hover {
+     
+}
+
+ 
+@media (max-width: 768px) {
+    .post-entry, .first-entry {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .entry-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/">
+  <meta property="og:site_name" content="system.popgen">
+  <meta property="og:title" content="Running ADMIXTURE in Supervised Mode">
+  <meta property="og:description" content="This post is a short follow-up to the previous one on Estimating Ancestry Components Using ADMIXTURE. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.
+What Is a Supervised Run? In supervised mode, ADMIXTURE skips the component discovery step and instead uses user-defined groupings to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-08-05T13:21:16+02:00">
+    <meta property="article:modified_time" content="2025-08-05T13:21:16+02:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Running ADMIXTURE in Supervised Mode">
+<meta name="twitter:description" content="This post is a short follow-up to the previous one on Estimating Ancestry Components Using ADMIXTURE. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.
+
+What Is a Supervised Run?
+In supervised mode, ADMIXTURE skips the component discovery step and instead uses user-defined groupings to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://system-777.github.io/popgen-blog/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Running ADMIXTURE in Supervised Mode",
+      "item": "https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Running ADMIXTURE in Supervised Mode",
+  "name": "Running ADMIXTURE in Supervised Mode",
+  "description": "This post is a short follow-up to the previous one on Estimating Ancestry Components Using ADMIXTURE. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.\nWhat Is a Supervised Run? In supervised mode, ADMIXTURE skips the component discovery step and instead uses user-defined groupings to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "This post is a short follow-up to the previous one on Estimating Ancestry Components Using ADMIXTURE. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.\nWhat Is a Supervised Run? In supervised mode, ADMIXTURE skips the component discovery step and instead uses user-defined groupings to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.\nSupervised runs are much faster, especially with large datasets, since ADMIXTURE no longer has to determine the internal structure of each cluster.\nCreating a .pop File Supervised ADMIXTURE requires an additional file with the extension .pop. This file must:\nHave the exact same prefix as your .bed input file. Contain the same number of rows as your .fam file (one row per sample). Use labels (strings or integers) to assign each individual to a known ancestral population. Use - (or leave the line empty) for individuals whose ancestry you want ADMIXTURE to infer. For example, given a dataset admix.final.bed, create a file named admix.final.pop:\nNorthern West Asia Northern West Asia Northern West Asia - Northern West Asia In this example, the first three and the fifth samples are assigned to a component labeled Northern_West_Asia. The fourth sample (-) is unassigned and will be inferred based on the others. You can define as many distinct labels as components you want ADMIXTURE to model (Ks). The number of unique labels in the .pop file determines K, the number of ancestral populations you’ll specify in the run.\nRunning ADMIXTURE in Supervised Mode Once your .pop file is ready, you can start the supervised run with:\n# Assuming you used six distinct populations ./admixture32 --supervised admix.final.bed 6 ADMIXTURE will then use the population labels from your .pop file to build the ancestral components and infer proportions for unassigned individuals.\nWhen to Use Supervised Mode When to Use Supervised Mode\nSupervised ADMIXTURE is especially useful when:\nYou have high-confidence reference populations (ancient samples or unadmixed modern groups). You want to test how certain samples relate to predefined clusters. You want faster runs compared to iterative unsupervised testing. It’s important to note that component quality is entirely in your hands here. ADMIXTURE won’t “fix” poor references. Ideally, your reference populations should be homogeneous, representative, and contain many individuals.\nVisualizing Results The output files are the same as in unsupervised runs:\n.Q: Ancestry proportions per individual. .P: Allele frequencies per component. You can reuse the same plotting script from the previous post. Since your .pop labels now directly correspond to components, interpreting the bar plot becomes more straightforward.\n",
+  "wordCount" : "452",
+  "inLanguage": "en",
+  "datePublished": "2025-08-05T13:21:16+02:00",
+  "dateModified": "2025-08-05T13:21:16+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "system.popgen",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://system-777.github.io/popgen-blog/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://system-777.github.io/popgen-blog/" accesskey="h" title="system.popgen (Alt + H)">system.popgen</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://system-777.github.io/popgen-blog/contact/" title="Contact">
+                    <span>Contact</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Running ADMIXTURE in Supervised Mode
+    </h1>
+    <div class="post-meta"><span title='2025-08-05 13:21:16 +0200 CEST'>August 5, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>This post is a short follow-up to the previous one on <a href="/popgen-blog/posts/5-unsupervised-admixture/">Estimating Ancestry Components Using ADMIXTURE</a>. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.</p>
+<hr>
+<h3 id="what-is-a-supervised-run">What Is a Supervised Run?<a hidden class="anchor" aria-hidden="true" href="#what-is-a-supervised-run">#</a></h3>
+<p>In supervised mode, ADMIXTURE skips the component discovery step and instead uses <strong>user-defined groupings</strong> to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.</p>
+<p>Supervised runs are <strong>much faster</strong>, especially with large datasets, since ADMIXTURE no longer has to determine the internal structure of each cluster.</p>
+<hr>
+<h3 id="creating-a-pop-file">Creating a <code>.pop</code> File<a hidden class="anchor" aria-hidden="true" href="#creating-a-pop-file">#</a></h3>
+<p>Supervised ADMIXTURE requires an additional file with the extension <code>.pop</code>. This file must:</p>
+<ul>
+<li>Have the exact same prefix as your .bed input file.</li>
+<li>Contain the same number of rows as your .fam file (one row per sample).</li>
+<li>Use labels (strings or integers) to assign each individual to a known ancestral population.</li>
+<li>Use <code>-</code> (or leave the line empty) for individuals whose ancestry you want ADMIXTURE to infer.</li>
+</ul>
+<p>For example, given a dataset <code>admix.final.bed</code>, create a file named <code>admix.final.pop</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Northern West Asia
+</span></span><span style="display:flex;"><span>Northern West Asia
+</span></span><span style="display:flex;"><span>Northern West Asia
+</span></span><span style="display:flex;"><span>-
+</span></span><span style="display:flex;"><span>Northern West Asia
+</span></span></code></pre></div><p>In this example, the first three and the fifth samples are assigned to a component labeled Northern_West_Asia. The fourth sample (<code>-</code>) is unassigned and will be inferred based on the others.
+You can define as many distinct labels as components you want ADMIXTURE to model (Ks). The number of unique labels in the <code>.pop</code> file determines K, the number of ancestral populations you’ll specify in the run.</p>
+<hr>
+<h3 id="running-admixture-in-supervised-mode">Running ADMIXTURE in Supervised Mode<a hidden class="anchor" aria-hidden="true" href="#running-admixture-in-supervised-mode">#</a></h3>
+<p>Once your <code>.pop</code> file is ready, you can start the supervised run with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Assuming you used six distinct populations</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>./admixture32 --supervised admix.final.bed <span style="color:#ae81ff">6</span>
+</span></span></code></pre></div><p>ADMIXTURE will then use the population labels from your <code>.pop</code> file to build the ancestral components and infer proportions for unassigned individuals.</p>
+<hr>
+<h3 id="when-to-use-supervised-mode">When to Use Supervised Mode<a hidden class="anchor" aria-hidden="true" href="#when-to-use-supervised-mode">#</a></h3>
+<p>When to Use Supervised Mode</p>
+<p>Supervised ADMIXTURE is especially useful when:</p>
+<ul>
+<li>You have high-confidence reference populations (ancient samples or unadmixed modern groups).</li>
+<li>You want to test how certain samples relate to predefined clusters.</li>
+<li>You want faster runs compared to iterative unsupervised testing.</li>
+</ul>
+<p>It’s important to note that component quality is entirely in your hands here. ADMIXTURE won’t &ldquo;fix&rdquo; poor references. Ideally, your reference populations should be homogeneous, representative, and contain many individuals.</p>
+<hr>
+<h3 id="visualizing-results">Visualizing Results<a hidden class="anchor" aria-hidden="true" href="#visualizing-results">#</a></h3>
+<p>The output files are the same as in unsupervised runs:</p>
+<ul>
+<li><code>.Q</code>: Ancestry proportions per individual.</li>
+<li><code>.P</code>: Allele frequencies per component.</li>
+</ul>
+<p>You can reuse the same plotting script from the previous post. Since your <code>.pop</code> labels now directly correspond to components, interpreting the bar plot becomes more straightforward.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/">
+    <span class="title">Prev »</span>
+    <br>
+    <span>Estimating Ancestry Components Using ADMIXTURE</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://system-777.github.io/popgen-blog/">system.popgen</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
