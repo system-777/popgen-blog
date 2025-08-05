@@ -29,7 +29,7 @@ Northern_West_Asia
 Northern_West_Asia
 Northern_West_Asia
 -
-Northern West Asia
+Northern_West_Asia
 ```
 
 In this example, the first three and the fifth samples are assigned to a component labeled `Northern_West_Asia`. The fourth sample (`-`) is unassigned and will be inferred based on the others.
