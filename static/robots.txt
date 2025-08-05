@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://system-777.github.io/popgen-blog/sitemap.xml
