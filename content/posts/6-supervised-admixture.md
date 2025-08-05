@@ -41,7 +41,6 @@ You can define as many distinct labels as components you want ADMIXTURE to model
 Once your `.pop` file is ready, you can start the supervised run with:
 ``` bash
 # Assuming you used six distinct populations
-
 ./admixture32 --supervised admix.final.bed 6
 ```
 ADMIXTURE will then use the population labels from your `.pop` file to build the ancestral components and infer proportions for unassigned individuals.
