@@ -2,6 +2,7 @@
 date = '2025-08-02T22:47:12+02:00'
 draft = false
 title = 'Estimating Ancestry Components Using ADMIXTURE'
+tags = ["ADMIXTURE"]
 +++
 In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: [ADMIXTURE](https://dalexander.github.io/admixture/download.html). ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.
 

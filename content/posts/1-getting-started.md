@@ -2,7 +2,7 @@
 date = '2025-07-29T15:00:00'
 draft = false
 title = 'Getting Started with Population Genetic Analysis'
-tags = ["Data Preparation", "EIGENSTRAT"]
+tags = ["Data Processing", "EIGENSTRAT"]
 +++
 
 A Linux environment is unavoidable when it comes to bioinformatical data processing and preparation. You can use your favorite distribution.  

@@ -2,6 +2,7 @@
 date = '2025-08-05T13:21:16+02:00'
 draft = false
 title = 'Running ADMIXTURE in Supervised Mode'
+tags = ["ADMIXTURE"]
 +++
 This post is a short follow-up to the previous one on [Estimating Ancestry Components Using ADMIXTURE]({{< relref "posts/5-unsupervised-admixture.md" >}}). Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.
 
@@ -24,9 +25,9 @@ Supervised ADMIXTURE requires an additional file with the extension `.pop`. This
 For example, given a dataset `admix.final.bed`, create a file named `admix.final.pop`:
 
 ``` text
-Northern West Asia
-Northern West Asia
-Northern West Asia
+Northern_West_Asia
+Northern_West_Asia
+Northern_West_Asia
 -
 Northern West Asia
 ```
