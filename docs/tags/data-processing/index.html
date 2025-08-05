@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>Tags | system.popgen</title>
+<title>Data Processing | system.popgen</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="https://system-777.github.io/popgen-blog/tags/">
+<link rel="canonical" href="https://system-777.github.io/popgen-blog/tags/data-processing/">
 <link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
@@ -18,8 +18,8 @@
 <link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://system-777.github.io/popgen-blog/tags/index.xml">
-<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/tags/">
+<link rel="alternate" type="application/rss+xml" href="https://system-777.github.io/popgen-blog/tags/data-processing/index.xml">
+<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/tags/data-processing/">
 <noscript>
     <style>
         #theme-toggle,
@@ -171,13 +171,13 @@
         gap: 0.5rem;
     }
 }
-</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/tags/">
+</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/tags/data-processing/">
   <meta property="og:site_name" content="system.popgen">
-  <meta property="og:title" content="Tags">
+  <meta property="og:title" content="Data Processing">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Tags">
+<meta name="twitter:title" content="Data Processing">
 <meta name="twitter:description" content="">
 
 </head>
@@ -235,37 +235,74 @@
         </ul>
     </nav>
 </header>
-<main class="main">
+<main class="main"> 
 <header class="page-header">
-    <h1>Tags</h1>
+  <h1>
+    Data Processing
+  </h1>
 </header>
 
-<ul class="terms-tags">
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/admixture/">ADMIXTURE <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/convertf/">convertf <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/data-processing/">Data Processing <sup><strong><sup>4</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/eigenstrat/">EIGENSTRAT <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/packedped/">PACKEDPED <sup><strong><sup>1</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/pca/">PCA <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/plink/">PLINK <sup><strong><sup>3</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/smartpca/">smartpca <sup><strong><sup>1</sup></strong></sup> </a>
-    </li>
-</ul>
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Performing PCA on Genetic Data Using Smartpca
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, smartpca (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
+Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.
+As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-07-30 20:47:41 +0200 CEST'>July 30, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to Performing PCA on Genetic Data Using Smartpca" href="https://system-777.github.io/popgen-blog/posts/4-smartpca/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Performing PCA on Genetic Data Using PLINK
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>In this post, I’ll demonstrate how to perform a PCA on a PLINK dataset. Before we begin, we need to prepare a subset of samples we’re interested in analyzing.
+To do this, we’ll extract sample information from the .fam file. But first, we need to identify the samples of interest. For example, those from a specific population such as Sardinians.
+The easiest way is to open the corresponding .ind file and look at the population column, which is the third column in each row. Open the file in a text editor like Notepad&#43;&#43;, and search for the population name, in this case, Sardinian.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-07-29 16:00:00 +0000 UTC'>July 29, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to Performing PCA on Genetic Data Using PLINK" href="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">From EIGENSTRAT to PACKEDPED
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>The files downloaded in the previous blog post are in EIGENSTRAT format. In this post, we’ll look at how to convert them to PACKEDPED format.
+PACKEDPED format allows for easier downstream processing using the PLINK toolset. With PLINK, it becomes straightforward to extract sample subsets, filter SNPs, and perform a wide range of analyses.
+Downloading PLINK I use PLINK 1.9. While there is a newer version (2.0), I prefer 1.9 because it includes several features that were deprecated or removed in the newer release.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-07-29 15:30:00 +0000 UTC'>July 29, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to From EIGENSTRAT to PACKEDPED" href="https://system-777.github.io/popgen-blog/posts/2-from-eigenstrat-to-bed/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Getting Started with Population Genetic Analysis
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>A Linux environment is unavoidable when it comes to bioinformatical data processing and preparation. You can use your favorite distribution.
+For Windows users, the Windows Subsystem for Linux (WSL) provides a good alternative to dual booting or setting up a full virtual machine.
+Installing WSL with Debian Open PowerShell as Administrator and run:
+wsl --install -d Debian Once installed, update the system:
+sudo apt update &amp;&amp; sudo apt upgrade -y Downloading A Genetic Dataset Next, you need to obtain a genetic dataset. A good and comprehensive resource is the Allen Ancient DNA Resource (AADR).
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-07-29 15:00:00 +0000 UTC'>July 29, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to Getting Started with Population Genetic Analysis" href="https://system-777.github.io/popgen-blog/posts/1-getting-started/"></a>
+</article>
     </main>
     
 <footer class="footer">

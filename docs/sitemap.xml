@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://system-777.github.io/popgen-blog/tags/admixture/</loc>
+    <lastmod>2025-08-05T13:21:16+02:00</lastmod>
+  </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/</loc>
     <lastmod>2025-08-05T13:21:16+02:00</lastmod>
   </url><url>
@@ -11,13 +14,16 @@
     <loc>https://system-777.github.io/popgen-blog/</loc>
     <lastmod>2025-08-05T13:21:16+02:00</lastmod>
   </url><url>
+    <loc>https://system-777.github.io/popgen-blog/tags/</loc>
+    <lastmod>2025-08-05T13:21:16+02:00</lastmod>
+  </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/</loc>
     <lastmod>2025-08-02T22:47:12+02:00</lastmod>
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/tags/convertf/</loc>
     <lastmod>2025-07-30T20:47:41+02:00</lastmod>
   </url><url>
-    <loc>https://system-777.github.io/popgen-blog/tags/data-conversion/</loc>
+    <loc>https://system-777.github.io/popgen-blog/tags/data-processing/</loc>
     <lastmod>2025-07-30T20:47:41+02:00</lastmod>
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/tags/pca/</loc>
@@ -31,12 +37,6 @@
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/tags/smartpca/</loc>
     <lastmod>2025-07-30T20:47:41+02:00</lastmod>
-  </url><url>
-    <loc>https://system-777.github.io/popgen-blog/tags/</loc>
-    <lastmod>2025-07-30T20:47:41+02:00</lastmod>
-  </url><url>
-    <loc>https://system-777.github.io/popgen-blog/tags/data-preparation/</loc>
-    <lastmod>2025-07-29T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://system-777.github.io/popgen-blog/posts/3-pca-analysis/</loc>
     <lastmod>2025-07-29T16:00:00+00:00</lastmod>

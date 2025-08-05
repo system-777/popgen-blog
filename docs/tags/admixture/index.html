@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>Tags | system.popgen</title>
+<title>ADMIXTURE | system.popgen</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="https://system-777.github.io/popgen-blog/tags/">
+<link rel="canonical" href="https://system-777.github.io/popgen-blog/tags/admixture/">
 <link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
@@ -18,8 +18,8 @@
 <link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://system-777.github.io/popgen-blog/tags/index.xml">
-<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/tags/">
+<link rel="alternate" type="application/rss+xml" href="https://system-777.github.io/popgen-blog/tags/admixture/index.xml">
+<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/tags/admixture/">
 <noscript>
     <style>
         #theme-toggle,
@@ -171,13 +171,13 @@
         gap: 0.5rem;
     }
 }
-</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/tags/">
+</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/tags/admixture/">
   <meta property="og:site_name" content="system.popgen">
-  <meta property="og:title" content="Tags">
+  <meta property="og:title" content="ADMIXTURE">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Tags">
+<meta name="twitter:title" content="ADMIXTURE">
 <meta name="twitter:description" content="">
 
 </head>
@@ -235,37 +235,40 @@
         </ul>
     </nav>
 </header>
-<main class="main">
+<main class="main"> 
 <header class="page-header">
-    <h1>Tags</h1>
+  <h1>
+    ADMIXTURE
+  </h1>
 </header>
 
-<ul class="terms-tags">
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/admixture/">ADMIXTURE <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/convertf/">convertf <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/data-processing/">Data Processing <sup><strong><sup>4</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/eigenstrat/">EIGENSTRAT <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/packedped/">PACKEDPED <sup><strong><sup>1</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/pca/">PCA <sup><strong><sup>2</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/plink/">PLINK <sup><strong><sup>3</sup></strong></sup> </a>
-    </li>
-    <li>
-        <a href="https://system-777.github.io/popgen-blog/tags/smartpca/">smartpca <sup><strong><sup>1</sup></strong></sup> </a>
-    </li>
-</ul>
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Running ADMIXTURE in Supervised Mode
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>This post is a short follow-up to the previous one on Estimating Ancestry Components Using ADMIXTURE. Here, we’ll explore supervised ADMIXTURE, a mode that allows you to explicitly define ancestral populations and infer the ancestry proportions of unassigned individuals based on those references.
+What Is a Supervised Run? In supervised mode, ADMIXTURE skips the component discovery step and instead uses user-defined groupings to represent ancestral components. The benefit: if you already have solid candidates for reference populations, you can use them to quickly infer ancestry proportions for target or admixed individuals.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-08-05 13:21:16 +0200 CEST'>August 5, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to Running ADMIXTURE in Supervised Mode" href="https://system-777.github.io/popgen-blog/posts/6-supervised-admixture/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Estimating Ancestry Components Using ADMIXTURE
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>In this post, I’ll demonstrate how to estimate ancestry proportions using one of the most widely used tools in population genetics: ADMIXTURE. ADMIXTURE is a model-based clustering algorithm that infers individual ancestries from multilocus SNP genotype datasets.
+Preparing the Dataset Download the appropriate ADMIXTURE binary and either place it in your dataset directory or make it globally accessible. For this run, I included a subset of West Asian populations along with a few adjacent populations (around 150 samples in total). Linkage Disequilibrium (LD) pruning was applied beforehand. If you’re unsure how to prune your dataset, refer to the previous post.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-08-02 22:47:12 +0200 CEST'>August 2, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to Estimating Ancestry Components Using ADMIXTURE" href="https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/"></a>
+</article>
     </main>
     
 <footer class="footer">
