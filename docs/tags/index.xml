@@ -2,66 +2,66 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on system.popgen</title>
-    <link>https://system-777.github.io/popgen-blog/tags/</link>
+    <link>https://system0x7.github.io/popgen-blog/tags/</link>
     <description>Recent content in Tags on system.popgen</description>
     <generator>Hugo -- 0.148.2</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 05 Aug 2025 13:21:16 +0200</lastBuildDate>
-    <atom:link href="https://system-777.github.io/popgen-blog/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://system0x7.github.io/popgen-blog/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ADMIXTURE</title>
-      <link>https://system-777.github.io/popgen-blog/tags/admixture/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/admixture/</link>
       <pubDate>Tue, 05 Aug 2025 13:21:16 +0200</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/admixture/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/admixture/</guid>
       <description></description>
     </item>
     <item>
       <title>Convertf</title>
-      <link>https://system-777.github.io/popgen-blog/tags/convertf/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/convertf/</link>
       <pubDate>Wed, 30 Jul 2025 20:47:41 +0200</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/convertf/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/convertf/</guid>
       <description></description>
     </item>
     <item>
       <title>Data Processing</title>
-      <link>https://system-777.github.io/popgen-blog/tags/data-processing/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/data-processing/</link>
       <pubDate>Wed, 30 Jul 2025 20:47:41 +0200</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/data-processing/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/data-processing/</guid>
       <description></description>
     </item>
     <item>
       <title>PCA</title>
-      <link>https://system-777.github.io/popgen-blog/tags/pca/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/pca/</link>
       <pubDate>Wed, 30 Jul 2025 20:47:41 +0200</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/pca/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/pca/</guid>
       <description></description>
     </item>
     <item>
       <title>PLINK</title>
-      <link>https://system-777.github.io/popgen-blog/tags/plink/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/plink/</link>
       <pubDate>Wed, 30 Jul 2025 20:47:41 +0200</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/plink/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/plink/</guid>
       <description></description>
     </item>
     <item>
       <title>Smartpca</title>
-      <link>https://system-777.github.io/popgen-blog/tags/smartpca/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/smartpca/</link>
       <pubDate>Wed, 30 Jul 2025 20:47:41 +0200</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/smartpca/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/smartpca/</guid>
       <description></description>
     </item>
     <item>
       <title>EIGENSTRAT</title>
-      <link>https://system-777.github.io/popgen-blog/tags/eigenstrat/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/eigenstrat/</link>
       <pubDate>Tue, 29 Jul 2025 15:30:00 +0000</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/eigenstrat/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/eigenstrat/</guid>
       <description></description>
     </item>
     <item>
       <title>PACKEDPED</title>
-      <link>https://system-777.github.io/popgen-blog/tags/packedped/</link>
+      <link>https://system0x7.github.io/popgen-blog/tags/packedped/</link>
       <pubDate>Tue, 29 Jul 2025 15:30:00 +0000</pubDate>
-      <guid>https://system-777.github.io/popgen-blog/tags/packedped/</guid>
+      <guid>https://system0x7.github.io/popgen-blog/tags/packedped/</guid>
       <description></description>
     </item>
   </channel>

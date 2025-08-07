@@ -11,16 +11,16 @@
 Smartpca needs to be compiled on Linux or macOS. I covered how to install and prepare the toolchain on Linux in this earlier post: From EIGENSTRAT to PACKEDPED.
 As before, I’ll use a small subset. The focus here is on the technical process, not on interpreting the results. One key difference in this post is that I’ll perform Linkage Disequilibrium (LD) pruning, which helps reduce SNP redundancy and improves the detection of population structure in PCA.">
 <meta name="author" content="">
-<link rel="canonical" href="https://system-777.github.io/popgen-blog/posts/4-smartpca/">
+<link rel="canonical" href="https://system0x7.github.io/popgen-blog/posts/4-smartpca/">
 <link crossorigin="anonymous" href="/popgen-blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://system-777.github.io/popgen-blog/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://system-777.github.io/popgen-blog/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://system-777.github.io/popgen-blog/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://system-777.github.io/popgen-blog/apple-touch-icon.png">
-<link rel="mask-icon" href="https://system-777.github.io/popgen-blog/safari-pinned-tab.svg">
+<link rel="icon" href="https://system0x7.github.io/popgen-blog/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://system0x7.github.io/popgen-blog/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://system0x7.github.io/popgen-blog/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://system0x7.github.io/popgen-blog/apple-touch-icon.png">
+<link rel="mask-icon" href="https://system0x7.github.io/popgen-blog/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://system-777.github.io/popgen-blog/posts/4-smartpca/">
+<link rel="alternate" hreflang="en" href="https://system0x7.github.io/popgen-blog/posts/4-smartpca/">
 <noscript>
     <style>
         #theme-toggle,
@@ -172,7 +172,7 @@ As before, I’ll use a small subset. The focus here is on the technical process
         gap: 0.5rem;
     }
 }
-</style><meta property="og:url" content="https://system-777.github.io/popgen-blog/posts/4-smartpca/">
+</style><meta property="og:url" content="https://system0x7.github.io/popgen-blog/posts/4-smartpca/">
   <meta property="og:site_name" content="system.popgen">
   <meta property="og:title" content="Performing PCA on Genetic Data Using Smartpca">
   <meta property="og:description" content="This post is a continuation of the previous one, where I demonstrated how to perform PCA with PLINK. While PLINK’s PCA is great for quick, exploratory analysis, smartpca (part of the EIGENSOFT toolset) is more commonly used in published genetic studies.
@@ -204,13 +204,13 @@ As before, I’ll use a small subset. The focus here is on the technical process
       "@type": "ListItem",
       "position":  1 ,
       "name": "Posts",
-      "item": "https://system-777.github.io/popgen-blog/posts/"
+      "item": "https://system0x7.github.io/popgen-blog/posts/"
     }, 
     {
       "@type": "ListItem",
       "position":  2 ,
       "name": "Performing PCA on Genetic Data Using Smartpca",
-      "item": "https://system-777.github.io/popgen-blog/posts/4-smartpca/"
+      "item": "https://system0x7.github.io/popgen-blog/posts/4-smartpca/"
     }
   ]
 }
@@ -232,14 +232,14 @@ As before, I’ll use a small subset. The focus here is on the technical process
   "dateModified": "2025-07-30T20:47:41+02:00",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://system-777.github.io/popgen-blog/posts/4-smartpca/"
+    "@id": "https://system0x7.github.io/popgen-blog/posts/4-smartpca/"
   },
   "publisher": {
     "@type": "Organization",
     "name": "system.popgen",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://system-777.github.io/popgen-blog/favicon.ico"
+      "url": "https://system0x7.github.io/popgen-blog/favicon.ico"
     }
   }
 }
@@ -261,7 +261,7 @@ As before, I’ll use a small subset. The focus here is on the technical process
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://system-777.github.io/popgen-blog/" accesskey="h" title="system.popgen (Alt + H)">system.popgen</a>
+            <a href="https://system0x7.github.io/popgen-blog/" accesskey="h" title="system.popgen (Alt + H)">system.popgen</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -287,12 +287,12 @@ As before, I’ll use a small subset. The focus here is on the technical process
         </div>
         <ul id="menu">
             <li>
-                <a href="https://system-777.github.io/popgen-blog/" title="Home">
+                <a href="https://system0x7.github.io/popgen-blog/" title="Home">
                     <span>Home</span>
                 </a>
             </li>
             <li>
-                <a href="https://system-777.github.io/popgen-blog/contact/" title="Contact">
+                <a href="https://system0x7.github.io/popgen-blog/contact/" title="Contact">
                     <span>Contact</span>
                 </a>
             </li>
@@ -394,19 +394,19 @@ As before, I’ll use a small subset. The focus here is on the technical process
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://system-777.github.io/popgen-blog/tags/plink/">PLINK</a></li>
-      <li><a href="https://system-777.github.io/popgen-blog/tags/pca/">PCA</a></li>
-      <li><a href="https://system-777.github.io/popgen-blog/tags/smartpca/">Smartpca</a></li>
-      <li><a href="https://system-777.github.io/popgen-blog/tags/convertf/">Convertf</a></li>
-      <li><a href="https://system-777.github.io/popgen-blog/tags/data-processing/">Data Processing</a></li>
+      <li><a href="https://system0x7.github.io/popgen-blog/tags/plink/">PLINK</a></li>
+      <li><a href="https://system0x7.github.io/popgen-blog/tags/pca/">PCA</a></li>
+      <li><a href="https://system0x7.github.io/popgen-blog/tags/smartpca/">Smartpca</a></li>
+      <li><a href="https://system0x7.github.io/popgen-blog/tags/convertf/">Convertf</a></li>
+      <li><a href="https://system0x7.github.io/popgen-blog/tags/data-processing/">Data Processing</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="https://system-777.github.io/popgen-blog/posts/5-unsupervised-admixture/">
+  <a class="prev" href="https://system0x7.github.io/popgen-blog/posts/5-unsupervised-admixture/">
     <span class="title">« Next</span>
     <br>
     <span>Estimating Ancestry Components Using ADMIXTURE</span>
   </a>
-  <a class="next" href="https://system-777.github.io/popgen-blog/posts/3-pca-analysis/">
+  <a class="next" href="https://system0x7.github.io/popgen-blog/posts/3-pca-analysis/">
     <span class="title">Prev »</span>
     <br>
     <span>Performing PCA on Genetic Data Using PLINK</span>
@@ -418,7 +418,7 @@ As before, I’ll use a small subset. The focus here is on the technical process
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://system-777.github.io/popgen-blog/">system.popgen</a></span> · 
+        <span>&copy; 2025 <a href="https://system0x7.github.io/popgen-blog/">system.popgen</a></span> · 
 
     <span>
         Powered by
